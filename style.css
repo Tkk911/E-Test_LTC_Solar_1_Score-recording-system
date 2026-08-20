@@ -913,6 +913,11 @@ body {
    Print Layout - PDF Export
    ============================================================ */
 @media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
     /* Hide UI Elements */
     .app-header, .page-tabs, .action-buttons, .theme-selector,
     .btn, .header-actions .btn-outline, .card, .warning-note {
@@ -939,10 +944,10 @@ body {
     }
     .print-page {
         page-break-after: always;
-        padding: 5mm; 
+        padding: 0; 
         width: 100%;
         box-sizing: border-box;
-        font-family: 'Sarabun', 'TH Sarabun New', Tahoma, sans-serif;
+        font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', Tahoma, sans-serif;
     }
     .print-page:last-child {
         page-break-after: auto;
@@ -951,54 +956,55 @@ body {
     /* Print Header */
     .print-header {
         position: relative;
-        margin-bottom: 15px;
-        line-height: 1.4;
+        margin-bottom: 10px;
+        line-height: 1.2;
     }
     .print-header-box {
         position: absolute;
         top: 0;
         right: 0;
         border: 1px solid #000;
-        padding: 5px 15px;
+        padding: 3px 10px;
         font-weight: bold;
         font-size: 16px;
     }
     .print-header h3 {
         text-align: center;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: bold;
-        margin: 0 0 10px 0;
+        margin: 0 0 5px 0;
     }
     .print-header p {
-        margin: 4px 0;
-        font-size: 13px;
+        margin: 2px 0;
+        font-size: 15px;
     }
     .print-underline {
         display: inline-block;
         border-bottom: 1px dotted #000;
-        min-width: 200px;
-        padding-left: 10px;
+        min-width: 150px;
+        padding-left: 5px;
     }
 
     /* Print Tables */
     .print-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 11px;
-        margin-bottom: 15px;
+        font-size: 13px;
+        margin-bottom: 10px;
     }
     .print-table th, .print-table td {
         border: 1px solid #000;
-        padding: 4px 4px;
+        padding: 3px 4px;
         text-align: center;
         vertical-align: middle;
+        line-height: 1.1;
     }
     .print-table th {
         font-weight: bold;
     }
     .print-table th:nth-last-child(1),
     .print-table th:nth-last-child(2) {
-        font-size: 14px; /* Make the score headers a bit larger */
+        font-size: 18px; /* Make the score headers a bit larger */
     }
     .print-table .text-left {
         text-align: left;
@@ -1017,12 +1023,12 @@ body {
     
     /* Summary Page Specific */
     .summary-page-table {
-        width: 90%;
-        margin: 20px auto;
-        font-size: 18px; /* Increased font size */
+        width: 95%;
+        margin: 15px auto;
+        font-size: 16px;
     }
     .summary-page-table th, .summary-page-table td {
-        padding: 10px 12px;
+        padding: 5px 8px;
     }
     /* Make score and percentage cells larger and bolder */
     #print_sum_know_score, #print_sum_know_perc,
@@ -1034,17 +1040,27 @@ body {
     .signature-area {
         display: flex;
         justify-content: space-around;
-        margin-top: 40px;
+        margin-top: 30px;
         text-align: center;
-        font-size: 13px;
+        font-size: 16px;
     }
     .signature-box {
-        width: 40%;
+        width: 45%;
     }
     .signature-line {
         border-bottom: 1px dotted #000;
         margin-bottom: 10px;
         height: 30px;
+    }
+    
+    /* Override inline font sizes in index.html for summary page notes */
+    .print-page > div[style*="font-size:14px;"],
+    .print-page > div[style*="font-size: 14px;"] {
+        font-size: 16px !important;
+    }
+    .print-page > div[style*="font-size:16px;"],
+    .print-page > div[style*="font-size: 16px;"] {
+        font-size: 18px !important;
     }
 }
 
