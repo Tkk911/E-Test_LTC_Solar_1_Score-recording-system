@@ -496,14 +496,39 @@ function exportPDF() {
     s1s2_ids.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.style.fontSize = '18px';
+            el.style.fontSize = '20px';
             el.style.fontWeight = 'bold';
             if (el.previousElementSibling) {
-                el.previousElementSibling.style.fontSize = '18px';
+                el.previousElementSibling.style.fontSize = '20px';
                 el.previousElementSibling.style.fontWeight = 'bold';
             }
         }
     });
+
+    // Map individual sub-scores dynamically
+    document.querySelectorAll('select').forEach(el => {
+        if (el.id) {
+            const printEl = document.getElementById('p_' + el.id);
+            if (printEl) {
+                const max = el.options[el.options.length - 1].value;
+                printEl.textContent = `${el.value}/${max}`;
+            }
+        }
+    });
+    
+    // Special calculation for s2_dist_lr (left + right)
+    const lrEl = document.getElementById('p_s2_dist_lr');
+    if (lrEl) {
+        const leftEl = document.getElementById('s2_dist_left');
+        const rightEl = document.getElementById('s2_dist_right');
+        const left = parseFloat(leftEl?.value) || 0;
+        const right = parseFloat(rightEl?.value) || 0;
+        
+        const maxLeft = parseFloat(leftEl?.options[leftEl.options.length - 1].value) || 0;
+        const maxRight = parseFloat(rightEl?.options[rightEl.options.length - 1].value) || 0;
+        
+        lrEl.textContent = `${left + right}/${maxLeft + maxRight}`;
+    }
 
     // Station 1 scores
     if(document.getElementById('print_s1_score1')) document.getElementById('print_s1_score1').textContent = data.s1_safety_total;
