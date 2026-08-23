@@ -287,7 +287,7 @@ function saveData() {
     }
 
     const GAS_URL =
-        'https://script.google.com/macros/s/AKfycbwcfuOLUw8irm6E-KR-SDloFiUzoN9PeHlAB9DUL6QaAMeboF6dvmJhikhd6-4d015J/exec';
+        'https://script.google.com/macros/s/AKfycbxn5Psa63ILHDuj4BmfSIHG-u82Vk53vqzjpoiWHLkSgH58jqrkKQywEdBIwxNATxSs/exec';
 
     fetch(GAS_URL, {
             method: 'POST',
