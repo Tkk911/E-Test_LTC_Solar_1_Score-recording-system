@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>ระบบบันทึกคะแนน ช่างติดตั้งระบบโซลาร์เซลล์ ระดับ 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 </head>
 <body>
 
@@ -18,10 +19,12 @@
     <header class="app-header">
         <div class="header-content">
             <div class="logo-section">
-                <i class="fas fa-solar-panel"></i>
-                <div>
-                    <h1>ระบบบันทึกคะแนน</h1>
-                    <h2>ช่างติดตั้งระบบโซลาร์เซลล์ ระดับ 1</h2>
+                <div class="logo-icon">
+                    <i class="fas fa-solar-panel"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>ระบบบันทึก<span>คะแนน</span></h1>
+                    <p><i class="fas fa-bolt" style="color: var(--primary);"></i> ช่างติดตั้งระบบโซลาร์เซลล์ ระดับ 1</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -89,7 +92,7 @@
                 <div class="card-header station-1-header">
                     <i class="fas fa-tools"></i>
                     <h2>สถานีที่ 1: ภาคปฏิบัติ</h2>
-                    <span class="badge">คะแนนเต็ม 100</span>
+                    <span class="badge"><i class="fas fa-star"></i> คะแนนเต็ม 100</span>
                 </div>
                 <div class="card-body">
 
@@ -102,26 +105,26 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ตรวจสอบอุปกรณ์ PPE</label>
+                                    <label><i class="fas fa-hard-hat"></i> ตรวจสอบอุปกรณ์ PPE</label>
                                     <select id="s1_safety_ppe">
-                                        <option value="0">0</option>					
-                                        <option value="1">1</option>					
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
                                         <option value="2" selected>2</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/2</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/2</span>
                                 </div>
                                 <div class="score-item">
-                                    <label>ใส่ PPE</label>
+                                    <label><i class="fas fa-user-check"></i> ใส่ PPE</label>
                                     <select id="s1_safety_wear">
-                                        <option value="0">0</option>					
-                                        <option value="1">1</option>					
-                                        <option value="2">2</option>					
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
                                         <option value="3" selected>3</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/3</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/3</span>
                                 </div>
                                 <div class="score-item">
-                                    <label>ปฏิบัติตามหลักความปลอดภัย</label>
+                                    <label><i class="fas fa-clipboard-check"></i> ปฏิบัติตามหลักความปลอดภัย</label>
                                     <select id="s1_safety_practice">
                                         <option value="0">0</option>
                                         <option value="1">1</option>
@@ -130,7 +133,7 @@
                                         <option value="4">4</option>
                                         <option value="5" selected>5</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/5</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/5</span>
                                 </div>
                                 <div class="score-total">
                                     รวม: <strong id="s1_safety_total">0</strong>
@@ -154,71 +157,43 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ระยะ d1 = d3 (15)</label>
+                                    <label><i class="fas fa-ruler"></i> ระยะ d1 = d3 (15)</label>
                                     <div class="sub-scores">
-                                        <span>A <select id="s1_comp_a">
-					<option value="0">0</option>
-					<option value="5" selected>5</option></select></span>
-                                        <span>B <select id="s1_comp_b">
-					<option value="0">0</option>
-					<option value="5" selected>5</option></select></span>
-                                        <span>C <select id="s1_comp_c">
-					<option value="0">0</option>
-					<option value="5" selected>5</option></select></span>
+                                        <span>A <select id="s1_comp_a"><option value="0">0</option><option value="5" selected>5</option></select></span>
+                                        <span>B <select id="s1_comp_b"><option value="0">0</option><option value="5" selected>5</option></select></span>
+                                        <span>C <select id="s1_comp_c"><option value="0">0</option><option value="5" selected>5</option></select></span>
                                     </div>
                                     <div class="sub-detail">± 3 mm ผิด 1 จุดได้ 0 คะแนน ต่อชิ้น</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>ขนาดรูเจาะ (10)</label>
+                                    <label><i class="fas fa-drill"></i> ขนาดรูเจาะ (10)</label>
                                     <div class="sub-scores">
-                                        <span>A <select id="s1_hole_a">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
-                                        <span>B <select id="s1_hole_b">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
-                                        <span>C <select id="s1_hole_c">
-					<option value="0" selected>0</option></select></span>
-                                        <span>D <select id="s1_hole_d">
-					<option value="0">0</option>
-					<option value="4" selected>4</option></select></span>
+                                        <span>A <select id="s1_hole_a"><option value="0">0</option><option value="3" selected>3</option></select></span>
+                                        <span>B <select id="s1_hole_b"><option value="0">0</option><option value="3" selected>3</option></select></span>
+                                        <span>C <select id="s1_hole_c"><option value="0" selected>0</option></select></span>
+                                        <span>D <select id="s1_hole_d"><option value="0">0</option><option value="4" selected>4</option></select></span>
                                     </div>
                                     <div class="sub-detail">เลือกดอกสว่านถูกต้อง ผิด 1 จุดได้ 0 คะแนน</div>
                                 </div>
                             </div>
                             <div class="score-row" style="margin-top:8px;">
                                 <div class="score-item">
-                                    <label>ความสมบูรณ์ของรูเจาะ (5)</label>
+                                    <label><i class="fas fa-circle"></i> ความสมบูรณ์ของรูเจาะ (5)</label>
                                     <div class="sub-scores">
-                                        <span>A <select id="s1_holequal_a">
-					<option value="0">0</option>
-					<option value="1.5" selected>1.5</option></select></span>
-                                        <span>B <select id="s1_holequal_b">
-					<option value="0">0</option>
-					<option value="1.5" selected>1.5</option></select></span>
-                                        <span>C <select id="s1_holequal_c">
-					<option value="0" selected>0</option></select></span>
-                                        <span>D <select id="s1_holequal_d">
-					<option value="0">0</option>
-					<option value="2" selected>2</option></select></span>
+                                        <span>A <select id="s1_holequal_a"><option value="0">0</option><option value="1.5" selected>1.5</option></select></span>
+                                        <span>B <select id="s1_holequal_b"><option value="0">0</option><option value="1.5" selected>1.5</option></select></span>
+                                        <span>C <select id="s1_holequal_c"><option value="0" selected>0</option></select></span>
+                                        <span>D <select id="s1_holequal_d"><option value="0">0</option><option value="2" selected>2</option></select></span>
                                     </div>
                                     <div class="sub-detail">แตกร้าว/ไม่แตกร้าว ผิด 1 จุดได้ 0 คะแนน</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>อุปกรณ์ครบถ้วน (10)</label>
+                                    <label><i class="fas fa-boxes"></i> อุปกรณ์ครบถ้วน (10)</label>
                                     <div class="sub-scores">
-                                        <span>A <select id="s1_device_a">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>B <select id="s1_device_b">
-					<option value="0">0</option>
-<					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>C <select id="s1_device_c">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>D <select id="s1_device_d">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
+                                        <span>A <select id="s1_device_a"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>B <select id="s1_device_b"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>C <select id="s1_device_c"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>D <select id="s1_device_d"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
                                     </div>
                                     <div class="sub-detail">ใส่อุปกรณ์ครบถ้วนตามแบบ ผิด 1 จุดได้ 0 คะแนน</div>
                                 </div>
@@ -238,42 +213,22 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ทดสอบความมั่นคง (35)</label>
+                                    <label><i class="fas fa-handshake"></i> ทดสอบความมั่นคง (35)</label>
                                     <div class="sub-scores">
-                                        <span>A <select id="s1_strength_a">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option>
-					<option value="5" selected>5</option>
-					<option value="7.5" selected>7.5</option>
-					<option value="10" selected>10</option></select></span>
-                                        <span>B <select id="s1_strength_b">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option>
-					<option value="5" selected>5</option>
-					<option value="7.5" selected>7.5</option>
-					<option value="10" selected>10</option></select></span>
-                                        <span>C <select id="s1_strength_c">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option>
-					<option value="5" selected>5</option>
-					<option value="7.5" selected>7.5</option>
-					<option value="10" selected>10</option></select></span>
-                                        <span>D <select id="s1_strength_d">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option>
-					<option value="5" selected>5</option></select></span>
+                                        <span>A <select id="s1_strength_a"><option value="0">0</option><option value="2.5">2.5</option><option value="5">5</option><option value="7.5">7.5</option><option value="10" selected>10</option></select></span>
+                                        <span>B <select id="s1_strength_b"><option value="0">0</option><option value="2.5">2.5</option><option value="5">5</option><option value="7.5">7.5</option><option value="10" selected>10</option></select></span>
+                                        <span>C <select id="s1_strength_c"><option value="0">0</option><option value="2.5">2.5</option><option value="5">5</option><option value="7.5">7.5</option><option value="10" selected>10</option></select></span>
+                                        <span>D <select id="s1_strength_d"><option value="0">0</option><option value="2.5">2.5</option><option value="5" selected>5</option></select></span>
                                     </div>
                                     <div class="sub-detail">มีความมั่นคง ผิด 1 หัก 2.5 คะแนน ต่อชิ้น</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>ทดสอบด้วยประแจทอร์ค (35)</label>
+                                    <label><i class="fas fa-wrench"></i> ทดสอบด้วยประแจทอร์ค (35)</label>
                                     <div class="sub-scores">
                                         <span>A <select id="s1_torque_a"><option value="0" selected>0</option></select></span>
                                         <span>B <select id="s1_torque_b"><option value="0" selected>0</option></select></span>
                                         <span>C <select id="s1_torque_c"><option value="0" selected>0</option></select></span>
-                                        <span>D <select id="s1_torque_d">
-					<option value="0">0</option>					
-					<option value="5" selected>5</option></select></span>
+                                        <span>D <select id="s1_torque_d"><option value="0">0</option><option value="5" selected>5</option></select></span>
                                     </div>
                                     <div class="sub-detail">ผิด หัก 5 คะแนน ต่อชิ้น</div>
                                 </div>
@@ -293,16 +248,16 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ความสะอาดบริเวณปฏิบัติงาน</label>
+                                    <label><i class="fas fa-brush"></i> ความสะอาดบริเวณปฏิบัติงาน</label>
                                     <select id="s1_clean">
-                                        <option value="0">0</option>                                       
-                                        <option value="2">2</option>                                       
-                                        <option value="4">4</option>                                      
-                                        <option value="6">6</option>                                      
-                                        <option value="8">8</option>                                     
+                                        <option value="0">0</option>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="6">6</option>
+                                        <option value="8">8</option>
                                         <option value="10" selected>10</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/10</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/10</span>
                                 </div>
                                 <div class="score-total">
                                     รวม: <strong id="s1_clean_total">0</strong>
@@ -316,7 +271,7 @@
                     </div>
 
                     <div class="station-total">
-                        <h3>รวมคะแนนสถานีที่ 1: <span id="s1_grand_total">0</span> / 100</h3>
+                        <h3>☀️ รวมคะแนนสถานีที่ 1: <span id="s1_grand_total">0</span> / 100</h3>
                     </div>
                 </div>
             </section>
@@ -324,6 +279,7 @@
             <div class="action-buttons">
                 <button class="btn btn-primary" onclick="calculateAll()"><i class="fas fa-calculator"></i> คำนวณ</button>
                 <button class="btn btn-success" onclick="saveData()"><i class="fas fa-save"></i> บันทึก</button>
+                <button class="btn btn-info" onclick="exportPDF()"><i class="fas fa-print"></i> พิมพ์</button>
             </div>
         </div>
 
@@ -347,7 +303,7 @@
                 <div class="card-header station-2-header">
                     <i class="fas fa-bolt"></i>
                     <h2>สถานีที่ 2: ภาคปฏิบัติ</h2>
-                    <span class="badge">คะแนนเต็ม 100</span>
+                    <span class="badge"><i class="fas fa-star"></i> คะแนนเต็ม 100</span>
                 </div>
                 <div class="card-body">
 
@@ -362,22 +318,22 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ตรวจสอบและใช้อุปกรณ์ PPE</label>
+                                    <label><i class="fas fa-hard-hat"></i> ตรวจสอบและใช้อุปกรณ์ PPE</label>
                                     <select id="s2_safety_ppe">
-                                        <option value="0">0</option>                                        
-                                        <option value="2">2</option>                                        
+                                        <option value="0">0</option>
+                                        <option value="2">2</option>
                                         <option value="4" selected>4</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/4</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/4</span>
                                 </div>
                                 <div class="score-item">
-                                    <label>ปฏิบัติตามหลักความปลอดภัย</label>
+                                    <label><i class="fas fa-clipboard-check"></i> ปฏิบัติตามหลักความปลอดภัย</label>
                                     <select id="s2_safety_practice">
                                         <option value="0">0</option>
                                         <option value="3">3</option>
                                         <option value="6" selected>6</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/6</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/6</span>
                                 </div>
                                 <div class="score-total">รวม: <strong id="s2_safety_total">0</strong></div>
                             </div>
@@ -395,51 +351,37 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ระยะ 3 จุด (15)</label>
+                                    <label><i class="fas fa-ruler-combined"></i> ระยะ 3 จุด (15)</label>
                                     <div class="sub-scores">
-                                        <span>(d1=d3)ซ้าย <select id="s2_dist_left">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
-                                        <span>(d1=d3)ขวา <select id="s2_dist_right">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
-                                        <span>(d5=d7)บน <select id="s2_dist_top">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
-                                        <span>(d8=d10)ล่าง <select id="s2_dist_bottom">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
-                                        <span>(d6=d9)กลาง <select id="s2_dist_d5">
-					<option value="0">0</option>
-					<option value="3" selected>3</option></select></span>
+                                        <span>(d1=d3)ซ้าย <select id="s2_dist_left"><option value="0">0</option><option value="3" selected>3</option></select></span>
+                                        <span>(d1=d3)ขวา <select id="s2_dist_right"><option value="0">0</option><option value="3" selected>3</option></select></span>
+                                        <span>(d5=d7)บน <select id="s2_dist_top"><option value="0">0</option><option value="3" selected>3</option></select></span>
+                                        <span>(d8=d10)ล่าง <select id="s2_dist_bottom"><option value="0">0</option><option value="3" selected>3</option></select></span>
+                                        <span>(d6=d9)กลาง <select id="s2_dist_d5"><option value="0">0</option><option value="3" selected>3</option></select></span>
                                     </div>
                                     <div class="sub-detail">ระยะแตกต่าง ± 3 mm</div>
                                 </div>
                             </div>
                             <div class="score-row" style="margin-top:6px;">
                                 <div class="score-item">
-                                    <label>ระดับน้ำ (5)</label>
+                                    <label><i class="fas fa-water"></i> ระดับน้ำ (5)</label>
                                     <div class="sub-scores">
-                                        <span>รางยึดด้านบน <select id="s2_level_top">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>รางยึดด้านล่าง <select id="s2_level_bottom">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
+                                        <span>รางยึดด้านบน <select id="s2_level_top"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>รางยึดด้านล่าง <select id="s2_level_bottom"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
                                     </div>
                                     <div class="sub-detail">ระดับลูกน้ำ เลยขีด ได้ 0</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>การเคลื่อนย้ายรักษาแผง</label>
+                                    <label><i class="fas fa-truck"></i> การเคลื่อนย้ายรักษาแผง</label>
                                     <select id="s2_panel_care">
                                         <option value="0">0</option>
                                         <option value="5" selected>5</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/5</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/5</span>
                                     <div class="sub-detail">หากพบ ให้ 0 คะแนน</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>อุปกรณ์ครบถ้วน</label>
+                                    <label><i class="fas fa-boxes"></i> อุปกรณ์ครบถ้วน</label>
                                     <select id="s2_device_complete">
                                         <option value="0">0</option>
                                         <option value="1">1</option>
@@ -447,7 +389,7 @@
                                         <option value="7">7</option>
                                         <option value="10" selected>10</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/10</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/10</span>
                                     <div class="sub-detail">ผิด 1 จุด หัก 3 คะแนน</div>
                                 </div>
                             </div>
@@ -461,7 +403,7 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ทดสอบความมั่นคงรวมของแผงเซลล์แสงอาทิตย์</label>
+                                    <label><i class="fas fa-handshake"></i> ทดสอบความมั่นคงรวมของแผง</label>
                                     <select id="s2_stability">
                                         <option value="0">0</option>
                                         <option value="1">1</option>
@@ -471,17 +413,17 @@
                                         <option value="5">5</option>
                                         <option value="6" selected>6</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/6</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/6</span>
                                     <div class="sub-detail">ไม่โยกคลอนในแนวระนาบ</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>ทดสอบด้วยประแจทอร์ค</label>
+                                    <label><i class="fas fa-wrench"></i> ทดสอบด้วยประแจทอร์ค</label>
                                     <select id="s2_torque">
                                         <option value="0">0</option>
                                         <option value="7">7</option>
                                         <option value="14" selected>14</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/14</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/14</span>
                                     <div class="sub-detail">ผิด หัก 7 คะแนน</div>
                                 </div>
                                 <div class="score-total">รวม: <strong id="s2_strength_total">0</strong></div>
@@ -495,55 +437,33 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>การเชื่อมต่อ PV Connector (10)</label>
+                                    <label><i class="fas fa-link"></i> การเชื่อมต่อ PV Connector (10)</label>
                                     <div class="sub-scores">
-                                        <span>การเข้าหัว MC4 <select id="s2_mc4">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>ความต่อเนื่อง <select id="s2_continuity">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>ทองแดง โผล่<select id="s2_copper">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
-                                        <span>ตรวจสอบขั้วไฟฟ้า <select id="s2_polarity">
-					<option value="0">0</option>
-					<option value="2.5" selected>2.5</option></select></span>
+                                        <span>การเข้าหัว MC4 <select id="s2_mc4"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>ความต่อเนื่อง <select id="s2_continuity"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>ทองแดงโผล่ <select id="s2_copper"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
+                                        <span>ตรวจสอบขั้วไฟฟ้า <select id="s2_polarity"><option value="0">0</option><option value="2.5" selected>2.5</option></select></span>
                                     </div>
                                     <div class="sub-detail">MC4 พร้อมเฮาส์ซิ่ง, ทดสอบต่อเนื่อง, ไม่มีทองแดงโผล่, ตรวจขั้ว</div>
                                 </div>
                             </div>
                             <div class="score-row" style="margin-top:6px;">
                                 <div class="score-item">
-                                    <label>การต่อสาย / ระบบท่อเดิน</label>
+                                    <label><i class="fas fa-code-branch"></i> การต่อสาย / ระบบท่อเดิน</label>
                                     <div class="sub-scores">
-                                        <span>การต่อสายที่แผง <select id="s2_wire_panel">
-					<option value="0">0</option>
-					<option value="1" selected>1</option></select></span>
-                                        <span>ระบบท่อเดินสายไฟ <select id="s2_wire_conduit">
-					<option value="0">0</option>
-					<option value="4" selected>4</option></select></span>
+                                        <span>การต่อสายที่แผง <select id="s2_wire_panel"><option value="0">0</option><option value="1" selected>1</option></select></span>
+                                        <span>ระบบท่อเดินสายไฟ <select id="s2_wire_conduit"><option value="0">0</option><option value="4" selected>4</option></select></span>
                                     </div>
                                     <div class="sub-detail">ไม่เสียรูป, มั่นคง, มัดไม่โดนหลังคา</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>ติดตั้งในตู้ DC (5)</label>
+                                    <label><i class="fas fa-server"></i> ติดตั้งในตู้ DC (5)</label>
                                     <div class="sub-scores">
-                                        <span>ถูกต้องตามแบบ <select id="s2_wire_spec">
-					<option value="0">0</option>
-					<option value="1" selected>1</option></select></span>
-                                        <span>การต่อสายดิน <select id="s2_dc_ground">
-					<option value="0">0</option>
-					<option value="1" selected>1</option></select></span>
-                                        <span>ขั้วสายไฟฟ้า <select id="s2_dc_polarity">
-					<option value="0">0</option>
-					<option value="1" selected>1</option></select></span>
-                                        <span>สีสายไฟฟ้า <select id="s2_dc_color">
-					<option value="0">0</option>
-					<option value="1" selected>1</option></select></span>
-                                        <span>ความแข็งแรง <select id="s2_dc_strength">
-					<option value="0">0</option>
-					<option value="1" selected>1</option></select></span>
+                                        <span>ถูกต้องตามแบบ <select id="s2_wire_spec"><option value="0">0</option><option value="1" selected>1</option></select></span>
+                                        <span>การต่อสายดิน <select id="s2_dc_ground"><option value="0">0</option><option value="1" selected>1</option></select></span>
+                                        <span>ขั้วสายไฟฟ้า <select id="s2_dc_polarity"><option value="0">0</option><option value="1" selected>1</option></select></span>
+                                        <span>สีสายไฟฟ้า <select id="s2_dc_color"><option value="0">0</option><option value="1" selected>1</option></select></span>
+                                        <span>ความแข็งแรง <select id="s2_dc_strength"><option value="0">0</option><option value="1" selected>1</option></select></span>
                                     </div>
                                     <div class="sub-detail">เลือกใช้ถูกต้องตามแบบ ผิดได้ 0</div>
                                 </div>
@@ -558,13 +478,13 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ความสะอาดบริเวณปฏิบัติงาน</label>
+                                    <label><i class="fas fa-brush"></i> ความสะอาดบริเวณปฏิบัติงาน</label>
                                     <select id="s2_clean">
-                                        <option value="0">0</option>                                        
+                                        <option value="0">0</option>
                                         <option value="2.5">2.5</option>
                                         <option value="5" selected>5</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/5</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/5</span>
                                 </div>
                                 <div class="score-total">รวม: <strong id="s2_clean_total">0</strong></div>
                             </div>
@@ -581,21 +501,21 @@
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
-                                    <label>ตรวจสอบและบันทึกทางกายภาพ</label>
+                                    <label><i class="fas fa-eye"></i> ตรวจสอบและบันทึกทางกายภาพ</label>
                                     <select id="s2_inspect_physical">
                                         <option value="0">0</option>
                                         <option value="5" selected>5</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/5</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/5</span>
                                     <div class="sub-detail">รายงานผิด 1 จุดได้ 0</div>
                                 </div>
                                 <div class="score-item">
-                                    <label>ตรวจสอบความต่อเนื่องทางไฟฟ้า</label>
+                                    <label><i class="fas fa-bolt"></i> ตรวจสอบความต่อเนื่องทางไฟฟ้า</label>
                                     <select id="s2_inspect_electrical">
                                         <option value="0">0</option>
                                         <option value="5" selected>5</option>
                                     </select>
-                                    <span style="font-size:12px;color:var(--text-light);margin-left:4px;">/5</span>
+                                    <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">/5</span>
                                     <div class="sub-detail">รายงานผิด 1 จุดได้ 0</div>
                                 </div>
                                 <div class="score-total">รวม: <strong id="s2_inspect_total">0</strong></div>
@@ -604,7 +524,7 @@
                     </div>
 
                     <div class="station-total">
-                        <h3>รวมคะแนนสถานีที่ 2: <span id="s2_grand_total">0</span> / 100</h3>
+                        <h3>⚡ รวมคะแนนสถานีที่ 2: <span id="s2_grand_total">0</span> / 100</h3>
                     </div>
                 </div>
             </section>
@@ -612,6 +532,7 @@
             <div class="action-buttons">
                 <button class="btn btn-primary" onclick="calculateAll()"><i class="fas fa-calculator"></i> คำนวณ</button>
                 <button class="btn btn-success" onclick="saveData()"><i class="fas fa-save"></i> บันทึก</button>
+                <button class="btn btn-info" onclick="exportPDF()"><i class="fas fa-print"></i> พิมพ์</button>
             </div>
         </div>
 
@@ -635,23 +556,23 @@
                 <div class="card-header knowledge-header">
                     <i class="fas fa-brain"></i>
                     <h2>ภาคความรู้</h2>
-                    <span class="badge">คะแนนเต็ม 50</span>
+                    <span class="badge"><i class="fas fa-star"></i> คะแนนเต็ม 50</span>
                 </div>
                 <div class="card-body">
                     <div class="knowledge-row">
                         <div class="form-group">
-                            <label>จำนวนข้อที่ทำได้</label>
+                            <label><i class="fas fa-question-circle"></i> จำนวนข้อที่ทำได้</label>
                             <input type="number" id="knowledgeCorrect" min="0" max="60" value="0" />
                             <span class="helper">จากทั้งหมด 60 ข้อ</span>
                         </div>
                         <div class="form-group">
-                            <label>คะแนนที่ได้</label>
+                            <label><i class="fas fa-graduation-cap"></i> คะแนนที่ได้</label>
                             <input type="number" id="knowledgeScore" readonly value="0" step="0.01" />
                             <span class="helper">คิดเป็น 20% ของคะแนนทั้งหมด</span>
                         </div>
                     </div>
                     <div class="knowledge-result" id="knowledgeResult">
-                        <span class="pending">กรุณากรอกจำนวนข้อที่ทำได้</span>
+                        <span class="pending"><i class="fas fa-info-circle"></i> กรุณากรอกจำนวนข้อที่ทำได้</span>
                     </div>
                 </div>
             </section>
@@ -660,6 +581,7 @@
                 <div class="card-header summary-header">
                     <i class="fas fa-chart-pie"></i>
                     <h2>สรุปผลการประเมิน</h2>
+                    <span class="badge"><i class="fas fa-trophy"></i> เกณฑ์ 70%</span>
                 </div>
                 <div class="card-body">
                     <div class="summary-table-wrap">
@@ -708,17 +630,17 @@
                     </div>
 
                     <div class="result-status" id="resultStatus">
-                        <span class="pending">กรุณากรอกข้อมูลให้ครบถ้วน</span>
+                        <span class="pending"><i class="fas fa-spinner fa-pulse"></i> กรุณากรอกข้อมูลให้ครบถ้วน</span>
                     </div>
 
                     <div class="summary-note">
                         <i class="fas fa-info-circle"></i>
-                        <span>หมายเหตุ: เกณฑ์การตัดสินที่ผ่านการทดสอบรวมภาคความรู้และภาคความสามารถต้องไม่น้อยกว่าร้อยละ 70</span>
+                        <span><strong>หมายเหตุ:</strong> เกณฑ์การตัดสินที่ผ่านการทดสอบรวมภาคความรู้และภาคความสามารถต้องไม่น้อยกว่าร้อยละ 70</span>
                     </div>
 
                     <div class="signature-section">
                         <div class="signature-box">
-                            <p><i class="fas fa-pen"></i> ลงชื่อ ผู้ทดสอบมาตรฐานฝีมือแรงงาน</p>
+                            <p><i class="fas fa-pen-fancy"></i> ลงชื่อ ผู้ทดสอบมาตรฐานฝีมือแรงงาน</p>
                             <div class="signature-lines">
                                 <div>1. …...................................................</div>
                                 <div>2. …...................................................</div>
@@ -726,7 +648,7 @@
                             </div>
                         </div>
                         <div class="signature-box">
-                            <p><i class="fas fa-pen"></i> ลงชื่อ ผู้รวมคะแนน</p>
+                            <p><i class="fas fa-pen-fancy"></i> ลงชื่อ ผู้รวมคะแนน</p>
                             <div class="signature-lines">
                                 <div>1. …...................................................</div>
                             </div>
@@ -734,7 +656,7 @@
                     </div>
 
                     <div class="final-result">
-                        <span class="result-label">📌 ผลการทดสอบมาตรฐานฝีมือแรงงาน</span>
+                        <span class="result-label"><i class="fas fa-medal"></i> ผลการทดสอบมาตรฐานฝีมือแรงงาน</span>
                         <span class="result-value pending" id="finalResult">รอประเมิน</span>
                     </div>
                 </div>
@@ -752,106 +674,109 @@
     </main>
 
     <footer class="app-footer">
-        <p>ระบบบันทึกคะแนน ช่างติดตั้งโซลาร์เซลล์ ระดับ 1 &copy; 2026</p>
-        <p>ผู้พัฒนา:เวอร์ชั่น 1.0.1:อาจารย์ธีระ กลมเกลา กลุ่มงานไฟฟ้าและอิเล็กทรอนิกส์:klomklaotkk911@gmail.com</p>
-		<p>วิทยาลัยเทคโนโลยีแหลมทอง</p>
+        <p>ระบบบันทึกคะแนน ช่างติดตั้งระบบโซลาร์เซลล์ ระดับ 1 <span class="highlight">© 2026</span></p>
+        <p>พัฒนาโดย อาจารย์ธีระ กลมเกลา กลุ่มงานไฟฟ้าและอิเล็กทรอนิกส์ | klomklaotkk911@gmail.com</p>
+        <p>วิทยาลัยเทคโนโลยีแหลมทอง</p>
     </footer>
 
 </div>
 
-    <!-- PRINT TEMPLATES -->
-    <div id="print-container">
-        <!-- STATION 1 -->
-        <div class="print-page">
-            <div class="print-header">
-                <div class="print-header-box">สถานีที่ 1</div>
-                <h3>ใบให้คะแนนการทดสอบมาตรฐานฝีมือแรงงานแห่งชาติ สาขาช่างติดตั้งโซลาร์เซลล์ ระดับ 1</h3>
-                <p>ครั้งที่ ..........วันที่...........เดือน................................................พ.ศ......................................</p>
-                <p>ชื่อ-สกุล ผู้เข้ารับการทดสอบ <span id="print_s1_name" class="print-underline"></span></p>
-                <p>สถานที่ทดสอบ <span id="print_s1_loc" class="print-underline" style="min-width:150px;"></span> หมายเลขแผงทดสอบ <span id="print_s1_panel" class="print-underline" style="min-width:150px;"></span></p>
-            </div>
-            <table class="print-table">
-                <thead>
-                    <tr><th width="5%" rowspan="2">ลำดับ</th><th width="15%" rowspan="2">หัวข้อ</th><th width="60%" colspan="4">ลักษณะการตรวจ อักษรกำกับสัดส่วนหรือวัสดุ</th><th width="10%" rowspan="2">คะแนน<br>เต็ม</th><th width="10%" rowspan="2">คะแนน<br>ที่ได้</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td rowspan="3" class="text-top">1</td><td rowspan="3" class="text-top">ความปลอดภัย</td><td class="grey-bg">การตรวจสอบอุปกรณ์ PPE(<span id="p_s1_safety_ppe">2</span>)</td><td class="grey-bg" colspan="2">ใส่ PPE(<span id="p_s1_safety_wear">3</span>)</td><td class="grey-bg">ปฏิบัติงานตามหลักความปลอดภัย (<span id="p_s1_safety_practice">5</span>)</td><td rowspan="3">10</td><td rowspan="3" id="print_s1_score1">0</td></tr>
-                    <tr><td>ไม่ตรวจสอบอุปกรณ์หัก<br>อุปกรณ์ละ 1 คะแนน</td><td colspan="2">ไม่สวมใส่ ใช้ไม่ถูกต้อง<br>ตัดจุดละ 1 คะแนน</td><td>ไม่ปฏิบัติตามหลักความปลอดภัย ผิดครั้งละ 1 คะแนน</td></tr>
-                    <tr><td colspan="4" style="border:none;"></td></tr>
-                    <tr><td rowspan="5" class="text-top">2</td><td rowspan="5" class="text-top">ความสมบูรณ์<br>ตรงตามแบบ</td><td class="grey-bg">ระยะ d1 = d3 (15)</td><td class="grey-bg">ขนาดรูเจาะ (10)</td><td class="grey-bg">ความสมบูรณ์ของรูเจาะ(5)</td><td class="grey-bg">อุปกรณ์ครบถ้วน (10)</td><td rowspan="5">40</td><td rowspan="5" id="print_s1_score2">0</td></tr>
-                    <tr><td>A(<span id="p_s1_comp_a">5</span>) B(<span id="p_s1_comp_b">5</span>) C(<span id="p_s1_comp_c">5</span>)</td><td>A(<span id="p_s1_hole_a">3</span>) B(<span id="p_s1_hole_b">3</span>) C(<span id="p_s1_hole_c">0</span>) D(<span id="p_s1_hole_d">4</span>)</td><td>A(<span id="p_s1_holequal_a">1.5</span>) B(<span id="p_s1_holequal_b">1.5</span>) C(<span id="p_s1_holequal_c">0</span>) D(<span id="p_s1_holequal_d">2</span>)</td><td>A(<span id="p_s1_device_a">2.5</span>) B(<span id="p_s1_device_b">2.5</span>) C(<span id="p_s1_device_c">2.5</span>) D(<span id="p_s1_device_d">2.5</span>)</td></tr>
-                    <tr><td>± 3 mm<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td><td>เลือกดอกสว่านถูกต้อง<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td><td>แตกร้าว / ไม่แตกร้าว<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td><td>ใส่อุปกรณ์ครบถ้วนตามแบบ<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td></tr>
-                    <tr><td colspan="4" style="border:none;"></td></tr><tr><td colspan="4" style="border:none;"></td></tr>
-                    <tr><td rowspan="4" class="text-top">3</td><td rowspan="4" class="text-top">ความแข็งแรง</td><td class="grey-bg" colspan="2">ทดสอบความมั่นคง (35)</td><td class="grey-bg" colspan="2">ทดสอบด้วยประแจทอร์ค (35)</td><td rowspan="4">40</td><td rowspan="4" id="print_s1_score3">0</td></tr>
-                    <tr><td colspan="2">A(<span id="p_s1_strength_a">10</span>) B(<span id="p_s1_strength_b">10</span>) C(<span id="p_s1_strength_c">10</span>) D(<span id="p_s1_strength_d">5</span>)</td><td colspan="2">A(0) B(0) C(0) D(<span id="p_s1_torque_d">5</span>)</td></tr>
-                    <tr><td colspan="2">มีความมั่นคง<br>ผิด 1 หักจุดละ 2.5 คะแนน ต่อชิ้นงาน</td><td colspan="2">ผิด หักจุดละ 5 คะแนน ต่อชิ้นงาน</td></tr>
-                    <tr><td colspan="4" style="border:none;"></td></tr>
-                    <tr><td rowspan="3" class="text-top">4</td><td rowspan="3" class="text-top">ความสะอาด</td><td class="grey-bg" colspan="4">ความสะอาดบริเวณปฏิบัติงาน (<span id="p_s1_clean">10</span>)</td><td rowspan="3">10</td><td rowspan="3" id="print_s1_score4">0</td></tr>
-                    <tr><td colspan="4">พิจารณารอบบริเวณปฏิบัติงาน<br>ผิดหักจุดละ 2 คะแนน</td></tr>
-                    <tr><td colspan="4" style="border:none;"></td></tr>
-                    <tr class="section-row"><td colspan="6" style="text-align:right; padding-right:15px;">รวม</td><td colspan="2" id="print_s1_total">0</td></tr>
-                </tbody>
-            </table>
+<!-- ========================================================== -->
+<!-- PRINT TEMPLATES -->
+<!-- ========================================================== -->
+<div id="print-container">
+    <!-- STATION 1 -->
+    <div class="print-page">
+        <div class="print-header">
+            <div class="print-header-box">สถานีที่ 1</div>
+            <h3>ใบให้คะแนนการทดสอบมาตรฐานฝีมือแรงงานแห่งชาติ สาขาช่างติดตั้งโซลาร์เซลล์ ระดับ 1</h3>
+            <p>ครั้งที่ ..........วันที่...........เดือน................................................พ.ศ......................................</p>
+            <p>ชื่อ-สกุล ผู้เข้ารับการทดสอบ <span id="print_s1_name" class="print-underline"></span></p>
+            <p>สถานที่ทดสอบ <span id="print_s1_loc" class="print-underline" style="min-width:150px;"></span> หมายเลขแผงทดสอบ <span id="print_s1_panel" class="print-underline" style="min-width:150px;"></span></p>
         </div>
+        <table class="print-table">
+            <thead>
+                <tr><th width="5%" rowspan="2">ลำดับ</th><th width="15%" rowspan="2">หัวข้อ</th><th width="60%" colspan="4">ลักษณะการตรวจ อักษรกำกับสัดส่วนหรือวัสดุ</th><th width="10%" rowspan="2">คะแนน<br>เต็ม</th><th width="10%" rowspan="2">คะแนน<br>ที่ได้</th></tr>
+            </thead>
+            <tbody>
+                <tr><td rowspan="3" class="text-top">1</td><td rowspan="3" class="text-top">ความปลอดภัย</td><td class="grey-bg">การตรวจสอบอุปกรณ์ PPE(<span id="p_s1_safety_ppe">2</span>)</td><td class="grey-bg" colspan="2">ใส่ PPE(<span id="p_s1_safety_wear">3</span>)</td><td class="grey-bg">ปฏิบัติงานตามหลักความปลอดภัย (<span id="p_s1_safety_practice">5</span>)</td><td rowspan="3">10</td><td rowspan="3" id="print_s1_score1">0</td></tr>
+                <tr><td>ไม่ตรวจสอบอุปกรณ์หัก<br>อุปกรณ์ละ 1 คะแนน</td><td colspan="2">ไม่สวมใส่ ใช้ไม่ถูกต้อง<br>ตัดจุดละ 1 คะแนน</td><td>ไม่ปฏิบัติตามหลักความปลอดภัย ผิดครั้งละ 1 คะแนน</td></tr>
+                <tr><td colspan="4" style="border:none;"></td></tr>
+                <tr><td rowspan="5" class="text-top">2</td><td rowspan="5" class="text-top">ความสมบูรณ์<br>ตรงตามแบบ</td><td class="grey-bg">ระยะ d1 = d3 (15)</td><td class="grey-bg">ขนาดรูเจาะ (10)</td><td class="grey-bg">ความสมบูรณ์ของรูเจาะ(5)</td><td class="grey-bg">อุปกรณ์ครบถ้วน (10)</td><td rowspan="5">40</td><td rowspan="5" id="print_s1_score2">0</td></tr>
+                <tr><td>A(<span id="p_s1_comp_a">5</span>) B(<span id="p_s1_comp_b">5</span>) C(<span id="p_s1_comp_c">5</span>)</td><td>A(<span id="p_s1_hole_a">3</span>) B(<span id="p_s1_hole_b">3</span>) C(<span id="p_s1_hole_c">0</span>) D(<span id="p_s1_hole_d">4</span>)</td><td>A(<span id="p_s1_holequal_a">1.5</span>) B(<span id="p_s1_holequal_b">1.5</span>) C(<span id="p_s1_holequal_c">0</span>) D(<span id="p_s1_holequal_d">2</span>)</td><td>A(<span id="p_s1_device_a">2.5</span>) B(<span id="p_s1_device_b">2.5</span>) C(<span id="p_s1_device_c">2.5</span>) D(<span id="p_s1_device_d">2.5</span>)</td></tr>
+                <tr><td>± 3 mm<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td><td>เลือกดอกสว่านถูกต้อง<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td><td>แตกร้าว / ไม่แตกร้าว<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td><td>ใส่อุปกรณ์ครบถ้วนตามแบบ<br>ผิด 1 จุดได้ 0 คะแนน ต่อชิ้นงาน</td></tr>
+                <tr><td colspan="4" style="border:none;"></td></tr><tr><td colspan="4" style="border:none;"></td></tr>
+                <tr><td rowspan="4" class="text-top">3</td><td rowspan="4" class="text-top">ความแข็งแรง</td><td class="grey-bg" colspan="2">ทดสอบความมั่นคง (35)</td><td class="grey-bg" colspan="2">ทดสอบด้วยประแจทอร์ค (35)</td><td rowspan="4">40</td><td rowspan="4" id="print_s1_score3">0</td></tr>
+                <tr><td colspan="2">A(<span id="p_s1_strength_a">10</span>) B(<span id="p_s1_strength_b">10</span>) C(<span id="p_s1_strength_c">10</span>) D(<span id="p_s1_strength_d">5</span>)</td><td colspan="2">A(0) B(0) C(0) D(<span id="p_s1_torque_d">5</span>)</td></tr>
+                <tr><td colspan="2">มีความมั่นคง<br>ผิด 1 หักจุดละ 2.5 คะแนน ต่อชิ้นงาน</td><td colspan="2">ผิด หักจุดละ 5 คะแนน ต่อชิ้นงาน</td></tr>
+                <tr><td colspan="4" style="border:none;"></td></tr>
+                <tr><td rowspan="3" class="text-top">4</td><td rowspan="3" class="text-top">ความสะอาด</td><td class="grey-bg" colspan="4">ความสะอาดบริเวณปฏิบัติงาน (<span id="p_s1_clean">10</span>)</td><td rowspan="3">10</td><td rowspan="3" id="print_s1_score4">0</td></tr>
+                <tr><td colspan="4">พิจารณารอบบริเวณปฏิบัติงาน<br>ผิดหักจุดละ 2 คะแนน</td></tr>
+                <tr><td colspan="4" style="border:none;"></td></tr>
+                <tr class="section-row"><td colspan="6" style="text-align:right; padding-right:15px;">รวม</td><td colspan="2" id="print_s1_total">0</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-        <!-- STATION 2 -->
-        <div class="print-page">
-            <div class="print-header">
-                <div class="print-header-box">สถานีที่ 2</div>
-                <h3>ใบให้คะแนนการทดสอบมาตรฐานฝีมือแรงงานแห่งชาติ สาขาช่างติดตั้งโซลาร์เซลล์ ระดับ 1</h3>
-                <p>ครั้งที่ ..........วันที่...........เดือน................................................พ.ศ......................................</p>
-                <p>ชื่อ-สกุล ผู้เข้ารับการทดสอบ <span id="print_s2_name" class="print-underline"></span></p>
-                <p>สถานที่ทดสอบ <span id="print_s2_loc" class="print-underline" style="min-width:150px;"></span> หมายเลขแผงทดสอบ <span id="print_s2_panel" class="print-underline" style="min-width:150px;"></span></p>
-                <p><strong>** หมายเหตุ หากมีการลัดวงจรที่ระบบไฟฟ้า หรือสลับขั้วสาย ไม่ต้องตรวจหัวข้ออื่น (ถือว่าไม่ผ่านการทดสอบ)</strong></p>
-            </div>
-            <table class="print-table">
-                <thead>
-                    <tr><th width="5%">ลำดับ</th><th width="15%">หัวข้อ</th><th width="60%">ลักษณะการตรวจ อักษรกำกับสัดส่วนหรือวัสดุ</th><th width="10%">คะแนน<br>เต็ม</th><th width="10%">คะแนน<br>ที่ได้</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td class="text-top">1</td><td class="text-top">ความปลอดภัย</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td class="grey-bg" style="border-top:none; border-left:none;">การตรวจสอบและใช้อุปกรณ์ PPE (<span id="p_s2_safety_ppe">4</span>)</td><td class="grey-bg" style="border-top:none; border-right:none;">ปฏิบัติงานตามหลักความปลอดภัย (<span id="p_s2_safety_practice">6</span>)</td></tr><tr><td style="border-left:none; border-bottom:none;">ใส่อุปกรณ์ไม่ชำรุดและครบถ้วน ผิด 1 จุด หัก 2 คะแนน</td><td style="border-right:none; border-bottom:none;">ปฏิบัติงานโดยคำนึงถึงความปลอดภัยต่อบุคคลและทรัพย์สิน<br>ปฏิบัติงานไม่ปลอดภัย หักครั้งละ 3 คะแนน</td></tr></table></td><td>10</td><td id="print_s2_score1">0</td></tr>
-                    <tr><td class="text-top">2</td><td class="text-top">ความสมบูรณ์<br>ตรงตามแบบ</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td colspan="4" class="grey-bg" style="border-top:none; border-left:none;">ระยะ 3 จุด (15)</td><td colspan="2" class="grey-bg" style="border-top:none;">ระดับน้ำ (5)</td><td rowspan="2" class="grey-bg" style="border-top:none;">การเคลื่อนย้าย<br>รักษาแผง (<span id="p_s2_panel_care">5</span>)</td><td rowspan="2" class="grey-bg" style="border-top:none; border-right:none;">อุปกรณ์ครบถ้วน<br>(<span id="p_s2_device_complete">10</span>)</td></tr><tr><td colspan="2">ระยะ d1 = d3 (<span id="p_s2_dist_lr">6</span>)</td><td>d5=d7<br>ด้านบน (<span id="p_s2_dist_top">3</span>)</td><td>d8=d10<br>ด้านล่าง (<span id="p_s2_dist_bottom">3</span>)</td><td>รางยึดด้านบน<br>(<span id="p_s2_level_top">2.5</span>)</td><td>รางยึดด้านล่าง<br>(<span id="p_s2_level_bottom">2.5</span>)</td></tr><tr><td colspan="4">ระยะแตกต่าง ± 3 mm</td><td colspan="2">ระดับลูกน้ำ เลยขีด ได้ 0 คะแนน</td><td>ปฏิบัติโดยไม่ทำให้แผงเสียหาย<br>หากพบ ให้ 0 คะแนน</td><td style="border-right:none;">ใส่อุปกรณ์ถูกต้องตามแบบ<br>ผิด 1 จุด หัก 3 คะแนน</td></tr></table></td><td>35</td><td id="print_s2_score2">0</td></tr>
-                    <tr><td class="text-top">3</td><td class="text-top">ความแข็งแรงของโครงสร้างรองรับเซลล์แสงอาทิตย์</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td class="grey-bg" style="border-top:none; border-left:none; width:50%;">ทดสอบความมั่นคงรวมของแผงเซลล์แสงอาทิตย์ (<span id="p_s2_stability">6</span>)</td><td class="grey-bg" style="border-top:none; border-right:none; width:50%;">ทดสอบด้วยประแจทอร์ค (<span id="p_s2_torque">14</span>)</td></tr><tr><td style="border-left:none; border-bottom:none;">มีความมั่นคงไม่โยกคลอนในแนวระนาบ<br>(ทดสอบโดยไม่กระชาก)</td><td style="border-right:none; border-bottom:none;">ผิด หักจุดละ 7 คะแนน</td></tr></table></td><td>20</td><td id="print_s2_score3">0</td></tr>
-                    <tr><td class="text-top">4</td><td class="text-top">การประกอบตู้ DC และเดินสายไฟฟ้า</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td colspan="4" class="grey-bg" style="border-top:none; border-left:none;">การเชื่อมต่อสาย PV Connector และแผงโซลาร์เซลล์ (10)</td><td rowspan="2" class="grey-bg" style="border-top:none;">การต่อสาย<br>ที่แผง (<span id="p_s2_wire_panel">1</span>)</td><td rowspan="2" class="grey-bg" style="border-top:none;">ระบบท่อเดิน<br>สายไฟฟ้า (<span id="p_s2_wire_conduit">4</span>)</td><td colspan="4" class="grey-bg" style="border-top:none; border-right:none;">ติดตั้งภายในตู้ไฟฟ้า DC (5)</td></tr><tr><td>วิธีการเข้าหัวสาย<br>MC4 พร้อมเฮาส์ซิ่ง (<span id="p_s2_mc4">2.5</span>)</td><td>ความต่อเนื่อง<br>(<span id="p_s2_continuity">2.5</span>)</td><td>ไม่มีสาย<br>ทองแดงโผล่ (<span id="p_s2_copper">2.5</span>)</td><td>ตรวจสอบขั้วไฟฟ้า<br>(<span id="p_s2_polarity">2.5</span>)</td><td>ความถูกต้อง<br>ตามแบบ (<span id="p_s2_wire_spec">1</span>)</td><td>การต่อ<br>สายดิน (<span id="p_s2_dc_ground">1</span>)</td><td>การตรวจสอบ<br>ขั้วไฟฟ้า (<span id="p_s2_dc_polarity">1</span>)</td><td style="border-right:none;">การตรวจสี<br>ของสายไฟ (<span id="p_s2_dc_color">1</span>)</td></tr></table></td><td>20</td><td id="print_s2_score4">0</td></tr>
-                    <tr><td class="text-top">5</td><td class="text-top">ความสะอาด</td><td class="grey-bg">ความสะอาดบริเวณปฏิบัติงาน (<span id="p_s2_clean">5</span>)<br><span style="font-weight:normal;background:#fff;display:block;margin-top:5px;padding:5px;">ผิด หักจุดละ 2.5 คะแนน</span></td><td>5</td><td id="print_s2_score5">0</td></tr>
-                    <tr><td class="text-top">6</td><td class="text-top">การตรวจสอบ<br>และรายงาน</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td class="grey-bg" style="border-top:none; border-left:none; width:50%;">ตรวจสอบและบันทึกผลทางกายภาพ (<span id="p_s2_inspect_physical">5</span>)</td><td class="grey-bg" style="border-top:none; border-right:none; width:50%;">ตรวจสอบความต่อเนื่องทางไฟฟ้า (<span id="p_s2_inspect_electrical">5</span>)</td></tr><tr><td style="border-left:none; border-bottom:none;">พบมีการรายงานผิด 1 จุดได้ 0 คะแนน</td><td style="border-right:none; border-bottom:none;">พบมีการรายงานผิด 1 จุดได้ 0 คะแนน</td></tr></table></td><td>10</td><td id="print_s2_score6">0</td></tr>
-                    <tr class="section-row"><td colspan="3" style="text-align:right; padding-right:15px;">รวม</td><td colspan="2" id="print_s2_total">0</td></tr>
-                </tbody>
-            </table>
+    <!-- STATION 2 -->
+    <div class="print-page">
+        <div class="print-header">
+            <div class="print-header-box">สถานีที่ 2</div>
+            <h3>ใบให้คะแนนการทดสอบมาตรฐานฝีมือแรงงานแห่งชาติ สาขาช่างติดตั้งโซลาร์เซลล์ ระดับ 1</h3>
+            <p>ครั้งที่ ..........วันที่...........เดือน................................................พ.ศ......................................</p>
+            <p>ชื่อ-สกุล ผู้เข้ารับการทดสอบ <span id="print_s2_name" class="print-underline"></span></p>
+            <p>สถานที่ทดสอบ <span id="print_s2_loc" class="print-underline" style="min-width:150px;"></span> หมายเลขแผงทดสอบ <span id="print_s2_panel" class="print-underline" style="min-width:150px;"></span></p>
+            <p><strong>** หมายเหตุ หากมีการลัดวงจรที่ระบบไฟฟ้า หรือสลับขั้วสาย ไม่ต้องตรวจหัวข้ออื่น (ถือว่าไม่ผ่านการทดสอบ)</strong></p>
         </div>
+        <table class="print-table">
+            <thead>
+                <tr><th width="5%">ลำดับ</th><th width="15%">หัวข้อ</th><th width="60%">ลักษณะการตรวจ อักษรกำกับสัดส่วนหรือวัสดุ</th><th width="10%">คะแนน<br>เต็ม</th><th width="10%">คะแนน<br>ที่ได้</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="text-top">1</td><td class="text-top">ความปลอดภัย</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td class="grey-bg" style="border-top:none; border-left:none;">การตรวจสอบและใช้อุปกรณ์ PPE (<span id="p_s2_safety_ppe">4</span>)</td><td class="grey-bg" style="border-top:none; border-right:none;">ปฏิบัติงานตามหลักความปลอดภัย (<span id="p_s2_safety_practice">6</span>)</td></tr><tr><td style="border-left:none; border-bottom:none;">ใส่อุปกรณ์ไม่ชำรุดและครบถ้วน ผิด 1 จุด หัก 2 คะแนน</td><td style="border-right:none; border-bottom:none;">ปฏิบัติงานโดยคำนึงถึงความปลอดภัยต่อบุคคลและทรัพย์สิน<br>ปฏิบัติงานไม่ปลอดภัย หักครั้งละ 3 คะแนน</td></tr></table></td><td>10</td><td id="print_s2_score1">0</td></tr>
+                <tr><td class="text-top">2</td><td class="text-top">ความสมบูรณ์<br>ตรงตามแบบ</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td colspan="4" class="grey-bg" style="border-top:none; border-left:none;">ระยะ 3 จุด (15)</td><td colspan="2" class="grey-bg" style="border-top:none;">ระดับน้ำ (5)</td><td rowspan="2" class="grey-bg" style="border-top:none;">การเคลื่อนย้าย<br>รักษาแผง (<span id="p_s2_panel_care">5</span>)</td><td rowspan="2" class="grey-bg" style="border-top:none; border-right:none;">อุปกรณ์ครบถ้วน<br>(<span id="p_s2_device_complete">10</span>)</td></tr><tr><td colspan="2">ระยะ d1 = d3 (<span id="p_s2_dist_lr">6</span>)</td><td>d5=d7<br>ด้านบน (<span id="p_s2_dist_top">3</span>)</td><td>d8=d10<br>ด้านล่าง (<span id="p_s2_dist_bottom">3</span>)</td><td>รางยึดด้านบน<br>(<span id="p_s2_level_top">2.5</span>)</td><td>รางยึดด้านล่าง<br>(<span id="p_s2_level_bottom">2.5</span>)</td></tr><tr><td colspan="4">ระยะแตกต่าง ± 3 mm</td><td colspan="2">ระดับลูกน้ำ เลยขีด ได้ 0 คะแนน</td><td>ปฏิบัติโดยไม่ทำให้แผงเสียหาย<br>หากพบ ให้ 0 คะแนน</td><td style="border-right:none;">ใส่อุปกรณ์ถูกต้องตามแบบ<br>ผิด 1 จุด หัก 3 คะแนน</td></tr></table></td><td>35</td><td id="print_s2_score2">0</td></tr>
+                <tr><td class="text-top">3</td><td class="text-top">ความแข็งแรงของโครงสร้างรองรับเซลล์แสงอาทิตย์</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td class="grey-bg" style="border-top:none; border-left:none; width:50%;">ทดสอบความมั่นคงรวมของแผงเซลล์แสงอาทิตย์ (<span id="p_s2_stability">6</span>)</td><td class="grey-bg" style="border-top:none; border-right:none; width:50%;">ทดสอบด้วยประแจทอร์ค (<span id="p_s2_torque">14</span>)</td></tr><tr><td style="border-left:none; border-bottom:none;">มีความมั่นคงไม่โยกคลอนในแนวระนาบ<br>(ทดสอบโดยไม่กระชาก)</td><td style="border-right:none; border-bottom:none;">ผิด หักจุดละ 7 คะแนน</td></tr></table></td><td>20</td><td id="print_s2_score3">0</td></tr>
+                <tr><td class="text-top">4</td><td class="text-top">การประกอบตู้ DC และเดินสายไฟฟ้า</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td colspan="4" class="grey-bg" style="border-top:none; border-left:none;">การเชื่อมต่อสาย PV Connector และแผงโซลาร์เซลล์ (10)</td><td rowspan="2" class="grey-bg" style="border-top:none;">การต่อสาย<br>ที่แผง (<span id="p_s2_wire_panel">1</span>)</td><td rowspan="2" class="grey-bg" style="border-top:none;">ระบบท่อเดิน<br>สายไฟฟ้า (<span id="p_s2_wire_conduit">4</span>)</td><td colspan="4" class="grey-bg" style="border-top:none; border-right:none;">ติดตั้งภายในตู้ไฟฟ้า DC (5)</td></tr><tr><td>วิธีการเข้าหัวสาย<br>MC4 พร้อมเฮาส์ซิ่ง (<span id="p_s2_mc4">2.5</span>)</td><td>ความต่อเนื่อง<br>(<span id="p_s2_continuity">2.5</span>)</td><td>ไม่มีสาย<br>ทองแดงโผล่ (<span id="p_s2_copper">2.5</span>)</td><td>ตรวจสอบขั้วไฟฟ้า<br>(<span id="p_s2_polarity">2.5</span>)</td><td>ความถูกต้อง<br>ตามแบบ (<span id="p_s2_wire_spec">1</span>)</td><td>การต่อ<br>สายดิน (<span id="p_s2_dc_ground">1</span>)</td><td>การตรวจสอบ<br>ขั้วไฟฟ้า (<span id="p_s2_dc_polarity">1</span>)</td><td style="border-right:none;">การตรวจสี<br>ของสายไฟ (<span id="p_s2_dc_color">1</span>)</td></tr></table></td><td>20</td><td id="print_s2_score4">0</td></tr>
+                <tr><td class="text-top">5</td><td class="text-top">ความสะอาด</td><td class="grey-bg">ความสะอาดบริเวณปฏิบัติงาน (<span id="p_s2_clean">5</span>)<br><span style="font-weight:normal;background:#fff;display:block;margin-top:5px;padding:5px;">ผิด หักจุดละ 2.5 คะแนน</span></td><td>5</td><td id="print_s2_score5">0</td></tr>
+                <tr><td class="text-top">6</td><td class="text-top">การตรวจสอบ<br>และรายงาน</td><td style="padding:0;"><table style="width:100%; border:none; margin:0;" class="print-table"><tr><td class="grey-bg" style="border-top:none; border-left:none; width:50%;">ตรวจสอบและบันทึกผลทางกายภาพ (<span id="p_s2_inspect_physical">5</span>)</td><td class="grey-bg" style="border-top:none; border-right:none; width:50%;">ตรวจสอบความต่อเนื่องทางไฟฟ้า (<span id="p_s2_inspect_electrical">5</span>)</td></tr><tr><td style="border-left:none; border-bottom:none;">พบมีการรายงานผิด 1 จุดได้ 0 คะแนน</td><td style="border-right:none; border-bottom:none;">พบมีการรายงานผิด 1 จุดได้ 0 คะแนน</td></tr></table></td><td>10</td><td id="print_s2_score6">0</td></tr>
+                <tr class="section-row"><td colspan="3" style="text-align:right; padding-right:15px;">รวม</td><td colspan="2" id="print_s2_total">0</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-        <!-- SUMMARY -->
-        <div class="print-page">
-            <div class="print-header"><br><br>
-                <h3>ใบให้คะแนนการทดสอบมาตรฐานฝีมือแรงงานแห่งชาติ สาขาช่างติดตั้งระบบโซลาร์เซลล์ ระดับ 1</h3>
-                <p style="text-align:center;">ครั้งที่ ..........วันที่...........เดือน................................................พ.ศ......................................</p>
-                <p style="text-align:center;">ชื่อ-สกุล ผู้เข้ารับการทดสอบ <span id="print_sum_name" class="print-underline"></span></p>
-                <p style="text-align:center;">สถานที่ทดสอบ <span id="print_sum_loc" class="print-underline" style="min-width:300px;"></span></p>
+    <!-- SUMMARY -->
+    <div class="print-page">
+        <div class="print-header"><br><br>
+            <h3>ใบให้คะแนนการทดสอบมาตรฐานฝีมือแรงงานแห่งชาติ สาขาช่างติดตั้งระบบโซลาร์เซลล์ ระดับ 1</h3>
+            <p style="text-align:center;">ครั้งที่ ..........วันที่...........เดือน................................................พ.ศ......................................</p>
+            <p style="text-align:center;">ชื่อ-สกุล ผู้เข้ารับการทดสอบ <span id="print_sum_name" class="print-underline"></span></p>
+            <p style="text-align:center;">สถานที่ทดสอบ <span id="print_sum_loc" class="print-underline" style="min-width:300px;"></span></p>
+        </div>
+        <table class="print-table summary-page-table">
+            <thead><tr><th width="10%">ลำดับ</th><th width="30%">รายละเอียด</th><th width="15%">คะแนนเต็ม</th><th width="15%">เปอร์เซ็นต์</th><th width="15%">คะแนนที่ได้</th><th width="15%">เปอร์เซนต์ที่ได้</th><th width="15%">หมายเหตุ</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td>ภาคความรู้</td><td>50</td><td>20</td><td id="print_sum_know_score">0</td><td id="print_sum_know_perc">0</td><td></td></tr>
+                <tr><td>2</td><td>ภาคความสามารถ</td><td>200</td><td>80</td><td id="print_sum_prac_score">0</td><td id="print_sum_prac_perc">0</td><td></td></tr>
+                <tr class="section-row"><td colspan="2">รวม</td><td></td><td>100</td><td id="print_sum_total_score">0</td><td id="print_sum_total_perc">0</td><td></td></tr>
+            </tbody>
+        </table>
+        <div style="width:90%; margin:0 auto; font-size:14px; margin-bottom:20px;">
+            <p><u>หมายเหตุ</u> เกณฑ์การตัดสินที่ผ่านการทดสอบรวมภาคความรู้และภาคความสามารถต้องไม่น้อยกว่าร้อยละ 70</p>
+        </div>
+        <div style="width:90%; margin:0 auto; font-size:16px; margin-bottom:30px; display:flex;">
+            <div style="width:40%;">ผลการทดสอบมาตรฐานฝีมือแรงงาน</div>
+            <div style="width:60%;">
+                <div style="margin-bottom:10px;"><span style="display:inline-block; width:25px; height:15px; border:1px solid #000; margin-right:10px; text-align:center; vertical-align:middle; line-height:15px;" id="print_sum_pass"></span> ผ่าน</div>
+                <div><span style="display:inline-block; width:25px; height:15px; border:1px solid #000; margin-right:10px; text-align:center; vertical-align:middle; line-height:15px;" id="print_sum_fail"></span> ไม่ผ่าน</div>
             </div>
-            <table class="print-table summary-page-table">
-                <thead><tr><th width="10%">ลำดับ</th><th width="30%">รายละเอียด</th><th width="15%">คะแนนเต็ม</th><th width="15%">เปอร์เซ็นต์</th><th width="15%">คะแนนที่ได้</th><th width="15%">เปอร์เซนต์ที่ได้</th><th width="15%">หมายเหตุ</th></tr></thead>
-                <tbody>
-                    <tr><td>1</td><td>ภาคความรู้</td><td>50</td><td>20</td><td id="print_sum_know_score">0</td><td id="print_sum_know_perc">0</td><td></td></tr>
-                    <tr><td>2</td><td>ภาคความสามารถ</td><td>200</td><td>80</td><td id="print_sum_prac_score">0</td><td id="print_sum_prac_perc">0</td><td></td></tr>
-                    <tr class="section-row"><td colspan="2">รวม</td><td></td><td>100</td><td id="print_sum_total_score">0</td><td id="print_sum_total_perc">0</td><td></td></tr>
-                </tbody>
-            </table>
-            <div style="width:90%; margin:0 auto; font-size:14px; margin-bottom:20px;">
-                <p><u>หมายเหตุ</u> เกณฑ์การตัดสินที่ผ่านการทดสอบรวมภาคความรู้และภาคความสามารถต้องไม่น้อยกว่าร้อยละ 70</p>
-            </div>
-            <div style="width:90%; margin:0 auto; font-size:16px; margin-bottom:30px; display:flex;">
-                <div style="width:40%;">ผลการทดสอบมาตรฐานฝีมือแรงงาน</div>
-                <div style="width:60%;">
-                    <div style="margin-bottom:10px;"><span style="display:inline-block; width:25px; height:15px; border:1px solid #000; margin-right:10px; text-align:center; vertical-align:middle; line-height:15px;" id="print_sum_pass"></span> ผ่าน</div>
-                    <div><span style="display:inline-block; width:25px; height:15px; border:1px solid #000; margin-right:10px; text-align:center; vertical-align:middle; line-height:15px;" id="print_sum_fail"></span> ไม่ผ่าน</div>
-                </div>
-            </div>
-            <div class="signature-area">
-                <div class="signature-box"><p style="margin-bottom:20px;">ลงชื่อ ผู้ทดสอบมาตรฐานฝีมือแรงงาน</p><div style="text-align:left; margin-left:20px;"><p>1. ....................................................................</p><p>2. ....................................................................</p><p>3. ....................................................................</p></div></div>
-                <div class="signature-box"><p style="margin-bottom:20px;">ลงชื่อ ผู้รวมคะแนน</p><div style="text-align:left; margin-left:20px;"><p>1. ....................................................................</p></div></div>
-            </div>
+        </div>
+        <div class="signature-area">
+            <div class="signature-box"><p style="margin-bottom:20px;">ลงชื่อ ผู้ทดสอบมาตรฐานฝีมือแรงงาน</p><div style="text-align:left; margin-left:20px;"><p>1. ....................................................................</p><p>2. ....................................................................</p><p>3. ....................................................................</p></div></div>
+            <div class="signature-box"><p style="margin-bottom:20px;">ลงชื่อ ผู้รวมคะแนน</p><div style="text-align:left; margin-left:20px;"><p>1. ....................................................................</p></div></div>
         </div>
     </div>
+</div>
+
 <script src="script.js"></script>
 </body>
 </html>
