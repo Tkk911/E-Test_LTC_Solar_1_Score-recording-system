@@ -2,7 +2,28 @@
 // ระบบบันทึกคะแนน ช่างติดตั้งโซลาร์เซลล์ ระดับ 1
 // ============================================================
 
+// ============================================================
+// IMAGE DATA - ลิงก์รูปภาพจาก Google Drive
+// ============================================================
+// 🔹 วิธีแปลงลิงก์ Google Drive ให้ใช้กับ <img> ได้:
+//    1. ไปที่ไฟล์ใน Google Drive → แชร์ → ตั้งค่า "ผู้ที่มีลิงก์"
+//    2. คัดลอกลิงก์: https://drive.google.com/file/d/[FILE_ID]/view
+//    3. นำ FILE_ID มาใส่ในลิงก์รูปแบบใดรูปแบบหนึ่งด้านล่าง:
+//       - https://drive.google.com/uc?export=view&id=FILE_ID
+//       - https://drive.google.com/thumbnail?id=FILE_ID&sz=w800
+//       - https://lh3.googleusercontent.com/d/FILE_ID
+// ============================================================
+
+const IMAGE_DATA = {
+    // รูปแบบที่ 1 - thumbnail (แนะนำ)
+    station1: 'https://drive.google.com/thumbnail?id=1XQVOugN74jlBElrgJybKyGn6Vz4MXqxz&sz=w800',
+    station2_01: 'https://drive.google.com/thumbnail?id=1LPxB2DqwX-yEP0imxPdm-DLPnlvtKfya&sz=w800',
+    station2_02: 'https://drive.google.com/thumbnail?id=1_5OSWZMacozBkij-t_MIdUsPyIs0pnlw&sz=w800'
+};
+
+// ============================================================
 // DOM Helpers
+// ============================================================
 const $ = (id) => document.getElementById(id);
 
 function getVal(id) {
@@ -287,7 +308,7 @@ function saveData() {
     }
 
     const GAS_URL =
-        'https://script.google.com/macros/s/AKfycbwcfuOLUw8irm6E-KR-SDloFiUzoN9PeHlAB9DUL6QaAMeboF6dvmJhikhd6-4d015J/exec';
+        'https://script.google.com/macros/s/AKfycbxn5Psa63ILHDuj4BmfSIHG-u82Vk53vqzjpoiWHLkSgH58jqrkKQywEdBIwxNATxSs/exec';
 
     fetch(GAS_URL, {
             method: 'POST',
@@ -455,12 +476,12 @@ const EXCEL_STYLES = {
     fontHeader: { name: 'Prompt', sz: 10, bold: true, color: { rgb: 'FFFFFF' } },
     fontAlert: { name: 'Prompt', sz: 10, bold: true, color: { rgb: 'C00000' } },
     
-    fillHeader: { fgColor: { rgb: '4472C4' } },      // Royal Blue
-    fillSubHeader: { fgColor: { rgb: 'E7E6E6' } },   // Soft Gray
-    fillScore: { fgColor: { rgb: 'FFF2CC' } },       // Soft Yellow (Input score)
-    fillMaxScore: { fgColor: { rgb: 'E2EFDA' } },    // Soft Green (Max score)
-    fillTotal: { fgColor: { rgb: 'FFC000' } },       // Gold / Amber (Grand Total)
-    fillHighlight: { fgColor: { rgb: 'FFE699' } },   // Accent highlight
+    fillHeader: { fgColor: { rgb: '4472C4' } },
+    fillSubHeader: { fgColor: { rgb: 'E7E6E6' } },
+    fillScore: { fgColor: { rgb: 'FFF2CC' } },
+    fillMaxScore: { fgColor: { rgb: 'E2EFDA' } },
+    fillTotal: { fgColor: { rgb: 'FFC000' } },
+    fillHighlight: { fgColor: { rgb: 'FFE699' } },
     
     borderThin: {
         top: { style: 'thin', color: { rgb: 'B0B0B0' } },
@@ -695,7 +716,7 @@ function buildSheetSummaryImproved(data) {
 function buildSheet1Improved(data) {
     const ws = {};
     const MAX_ROW = 24;
-    const MAX_COL = 22; // Column A to W (0 to 22)
+    const MAX_COL = 22;
 
     const ppe = getVal('s1_safety_ppe'),
         wear = getVal('s1_safety_wear'),
@@ -981,7 +1002,7 @@ function buildSheet1Improved(data) {
 function buildSheet2Improved(data) {
     const ws = {};
     const MAX_ROW = 35;
-    const MAX_COL = 28; // Column A to AC (0 to 28)
+    const MAX_COL = 28;
 
     const s2_ppe = getVal('s2_safety_ppe'),
         s2_prac = getVal('s2_safety_practice');
@@ -1353,16 +1374,14 @@ function buildSheet2Improved(data) {
 // ============================================================
 function buildSheetKnowledgeImproved(data) {
     const ws = {};
-    const MAX_ROW = 61; // Row 1 to 62 in Excel
-    const MAX_COL = 4;  // Column A to E (0 to 4)
+    const MAX_ROW = 61;
+    const MAX_COL = 4;
     const userCorrect = Math.round(data.knowledgeCorrect || 0);
 
-    // Header 1: Title (A1:E1)
     setStyledCell(ws, 0, 0, 'ตารางเทียบคะแนนภาคความรู้', {
         font: EXCEL_STYLES.fontBigTitle, alignment: EXCEL_STYLES.alignCenter, border: false
     });
 
-    // Header 2: Table Columns (A2:E2)
     const kHeaders = [
         'จำนวนข้อสอบ',
         'ข้อที่ทำได้',
@@ -1376,10 +1395,9 @@ function buildSheetKnowledgeImproved(data) {
         });
     });
 
-    // Rows 1 to 60 (Row 3 to 62 in Excel / Index 2 to 61)
     for (let i = 1; i <= 60; i++) {
-        const rowIdx = i + 1; // 0-based row index
-        const excelRow = i + 2; // 1-based Excel row number
+        const rowIdx = i + 1;
+        const excelRow = i + 2;
         const isUserScore = (i === userCorrect);
         const isPass = i >= 30;
         const passText = isPass ? 'ผ่าน  สามารถสอบภาคความสามารถต่อไปได้' : 'ไม่ผ่าน  ไม่สามารถสอบภาคความสามารถต่อไปได้';
@@ -1390,23 +1408,14 @@ function buildSheetKnowledgeImproved(data) {
             border: EXCEL_STYLES.borderThin
         };
 
-        // Col A: 60
-        setStyledCell(ws, rowIdx, 0, 60, {
-            ...rowStyle, alignment: EXCEL_STYLES.alignCenter
-        });
-        // Col B: ข้อที่ทำได้
-        setStyledCell(ws, rowIdx, 1, i, {
-            ...rowStyle, alignment: EXCEL_STYLES.alignCenter
-        });
-        // Col C: คะแนนที่ได้ (เต็ม 50)
+        setStyledCell(ws, rowIdx, 0, 60, { ...rowStyle, alignment: EXCEL_STYLES.alignCenter });
+        setStyledCell(ws, rowIdx, 1, i, { ...rowStyle, alignment: EXCEL_STYLES.alignCenter });
         setStyledCell(ws, rowIdx, 2, (i / 60) * 50, {
             ...rowStyle, f: `=(B${excelRow}/A${excelRow})*50`, alignment: EXCEL_STYLES.alignCenter, z: '0.00'
         });
-        // Col D: 20%
         setStyledCell(ws, rowIdx, 3, ((i / 60) * 50 * 20) / 50, {
             ...rowStyle, f: `=(C${excelRow}*20)/50`, alignment: EXCEL_STYLES.alignCenter, z: '0.00'
         });
-        // Col E: ผลการประเมิน
         setStyledCell(ws, rowIdx, 4, passText, {
             ...rowStyle, alignment: EXCEL_STYLES.alignLeft, font: isPass ? (isUserScore ? EXCEL_STYLES.fontPromptBold : EXCEL_STYLES.fontPrompt) : { name: 'Prompt', sz: 10, color: { rgb: 'A00000' } }
         });
@@ -1443,7 +1452,6 @@ function exportExcel() {
         
         const wb = XLSX.utils.book_new();
 
-        // สร้าง 4 แผ่นงานตามลำดับมาตรฐานของกรมพัฒนาฝีมือแรงงาน
         const wsSummary = buildSheetSummaryImproved(data);
         const wsStation1 = buildSheet1Improved(data);
         const wsStation2 = buildSheet2Improved(data);
@@ -1465,6 +1473,86 @@ function exportExcel() {
         console.error(e);
     }
 }
+
+// ============================================================
+// Image Preview - ฟังก์ชันเปิดรูปภาพใน Popup
+// ============================================================
+function openImagePreview(type) {
+    let imageUrl = '';
+    let title = '';
+    let caption = '';
+
+    switch(type) {
+        case 'station1':
+            imageUrl = IMAGE_DATA.station1;
+            title = '📐 แบบประกอบการให้คะแนน สถานีที่ 1 (ABCD.jpg)';
+            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - ห้างค้าคอนกรีต (แบบ A, B, C)';
+            break;
+        case 'station2_01':
+            imageUrl = IMAGE_DATA.station2_01;
+            title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 01.jpg)';
+            caption = 'การวัดระยะฟื้นติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 1)';
+            break;
+        case 'station2_02':
+            imageUrl = IMAGE_DATA.station2_02;
+            title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 02.jpg)';
+            caption = 'การวัดระยะฟื้นติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 2)';
+            break;
+        default:
+            alert('ไม่พบภาพประกอบ');
+            return;
+    }
+
+    // ตรวจสอบว่ามีลิงก์รูปภาพหรือไม่
+    if (!imageUrl || imageUrl === '' || imageUrl.includes('YOUR_FILE_ID')) {
+        alert('⚠️ กรุณาเปลี่ยน YOUR_FILE_ID เป็น File ID จริงจาก Google Drive');
+        return;
+    }
+
+    const modal = document.getElementById('imageModal');
+    const img = document.getElementById('modalImage');
+    const titleEl = document.getElementById('modalTitle');
+    const captionEl = document.getElementById('modalCaption');
+
+    titleEl.innerHTML = `<i class="fas fa-image"></i> ${title}`;
+    img.src = imageUrl;
+    captionEl.textContent = caption;
+
+    // รีเซ็ตการซูม
+    img.classList.remove('zoomed');
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// ============================================================
+// Close Image Preview
+// ============================================================
+function closeImagePreview(event) {
+    if (event && event.target !== event.currentTarget) return;
+    const modal = document.getElementById('imageModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// ============================================================
+// Image Zoom - คลิกที่รูปเพื่อซูม
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const modalImg = document.getElementById('modalImage');
+    if (modalImg) {
+        modalImg.addEventListener('click', function() {
+            this.classList.toggle('zoomed');
+        });
+    }
+
+    // ปิด Modal ด้วยปุ่ม ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeImagePreview();
+        }
+    });
+});
 
 // ============================================================
 // Export PDF (print)
@@ -1625,3 +1713,5 @@ document.addEventListener('keydown', function(e) {
 
 console.log('✅ ระบบบันทึกคะแนน ช่างติดตั้งโซลาร์เซลล์ ระดับ 1 พร้อมใช้งาน');
 console.log('📌 เปลี่ยนธีม: setTheme("light" | "dark" | "pastel")');
+console.log('📌 รูปภาพจาก Google Drive: เปลี่ยน YOUR_FILE_ID ใน IMAGE_DATA');
+console.log('📌 ตัวอย่างลิงก์: https://drive.google.com/uc?export=view&id=YOUR_FILE_ID');
