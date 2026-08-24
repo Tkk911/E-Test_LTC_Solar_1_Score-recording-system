@@ -87,6 +87,13 @@
                 </div>
             </section>
 
+            <!-- Image Preview Button - Station 1 -->
+            <div style="margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-info" onclick="openImagePreview('station1')">
+                    <i class="fas fa-image"></i> ดูแบบประกอบการให้คะแนน (ABCD.jpg)
+                </button>
+            </div>
+
             <!-- Station 1 -->
             <section class="card station-card">
                 <div class="card-header station-1-header">
@@ -298,6 +305,16 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Image Preview Buttons - Station 2 -->
+            <div style="margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-info" onclick="openImagePreview('station2_01')">
+                    <i class="fas fa-image"></i> ดูภาพประกอบที่ 1 (ติดตั้งแผง 01.jpg)
+                </button>
+                <button class="btn btn-info" onclick="openImagePreview('station2_02')">
+                    <i class="fas fa-image"></i> ดูภาพประกอบที่ 2 (ติดตั้งแผง 02.jpg)
+                </button>
+            </div>
 
             <section class="card station-card">
                 <div class="card-header station-2-header">
@@ -679,6 +696,25 @@
         <p>วิทยาลัยเทคโนโลยีแหลมทอง</p>
     </footer>
 
+</div>
+
+<!-- ========================================================== -->
+<!-- IMAGE PREVIEW MODAL -->
+<!-- ========================================================== -->
+<div class="image-modal" id="imageModal" onclick="closeImagePreview(event)">
+    <div class="image-modal-content" onclick="event.stopPropagation()">
+        <div class="image-modal-header">
+            <h3 id="modalTitle"><i class="fas fa-image"></i> ภาพประกอบการให้คะแนน</h3>
+            <button class="modal-close" onclick="closeImagePreview()">&times;</button>
+        </div>
+        <div class="image-modal-body">
+            <img id="modalImage" src="" alt="ภาพประกอบ" />
+            <div class="image-modal-caption" id="modalCaption">คลิกที่ภาพเพื่อซูม</div>
+        </div>
+        <div class="image-modal-footer">
+            <button class="btn btn-outline" onclick="closeImagePreview()"><i class="fas fa-times"></i> ปิด</button>
+        </div>
+    </div>
 </div>
 
 <!-- ========================================================== -->
