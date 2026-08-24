@@ -1486,17 +1486,17 @@ function openImagePreview(type) {
         case 'station1':
             imageUrl = IMAGE_DATA.station1;
             title = '📐 แบบประกอบการให้คะแนน สถานีที่ 1 (ABCD.jpg)';
-            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - ห้างค้าคอนกรีต (แบบ A, B, C)';
+            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - หลังคา (แบบ A, B, C , D)';
             break;
         case 'station2_01':
             imageUrl = IMAGE_DATA.station2_01;
             title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 01.jpg)';
-            caption = 'การวัดระยะฟื้นติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 1)';
+            caption = 'การวัดระยะติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 1)';
             break;
         case 'station2_02':
             imageUrl = IMAGE_DATA.station2_02;
             title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 02.jpg)';
-            caption = 'การวัดระยะฟื้นติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 2)';
+            caption = 'การวัดระยะติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 2)';
             break;
         default:
             alert('ไม่พบภาพประกอบ');
