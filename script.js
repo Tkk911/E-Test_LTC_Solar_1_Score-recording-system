@@ -15,9 +15,13 @@
 // ============================================================
 
 const IMAGE_DATA = {
-    // รูปแบบที่ 1 - thumbnail (แนะนำ)
+    // สถานีที่ 1: ABCD.jpg (เปลี่ยน YOUR_FILE_ID เป็น ID จริง)
     station1: 'https://drive.google.com/thumbnail?id=1XQVOugN74jlBElrgJybKyGn6Vz4MXqxz&sz=w800',
+    
+    // สถานีที่ 2: ติดตั้งแผง 01.jpg (เปลี่ยน YOUR_FILE_ID เป็น ID จริง)
     station2_01: 'https://drive.google.com/thumbnail?id=1LPxB2DqwX-yEP0imxPdm-DLPnlvtKfya&sz=w800',
+    
+    // สถานีที่ 2: ติดตั้งแผง 02.jpg (เปลี่ยน YOUR_FILE_ID เป็น ID จริง)
     station2_02: 'https://drive.google.com/thumbnail?id=1_5OSWZMacozBkij-t_MIdUsPyIs0pnlw&sz=w800'
 };
 
@@ -711,7 +715,7 @@ function buildSheetSummaryImproved(data) {
 }
 
 // ============================================================
-// 2. ชีท: สถานีที่ 1 ภาคปฏิบัติ (Station 1 Sheet)
+// 2. ชีท: สถานีที่ 1 ภาคปฏิบัติ (Station 1 Sheet) - แก้ไขแล้ว
 // ============================================================
 function buildSheet1Improved(data) {
     const ws = {};
@@ -795,7 +799,7 @@ function buildSheet1Improved(data) {
     setStyledCell(ws, 8, 4, 'อุปกรณ์ละ 1 คะแนน', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 8, 9, 'ตัดจุดละ 1 คะแนน', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
 
-    // --- ข้อ 2: ความสมบูรณ์ตรงตามแบบ (Row 10-14 / Index 9-13) ---
+    // --- ข้อ 2: ความสมบูรณ์ตรงตามแบบ (Row 10-14 / Index 9-13) - แก้ไขแล้ว ---
     setStyledCell(ws, 9, 0, '2', { font: EXCEL_STYLES.fontPromptBold, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 9, 1, 'ความสมบูรณ์ตรงตามแบบ', { font: EXCEL_STYLES.fontPromptBold, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 9, 4, 'ระยะ d1 =  d3 (15)', { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillSubHeader });
@@ -804,44 +808,44 @@ function buildSheet1Improved(data) {
     setStyledCell(ws, 9, 16, 'อุปกรณ์ครบถ้วน (10)', { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillSubHeader });
     setStyledCell(ws, 9, 21, 40, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillMaxScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 9, 22, s1_comp, {
-        f: '=F11+G11+H11+J11+K11+L11+M11+N11+O11+P11+Q11+R11+S11+T11+U11', font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0'
+        f: '=F11+G11+H11+I11+J11+K11+L11+M11+N11+O11+P11+Q11+R11+S11+T11', font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0'
     });
 
-    // Row 11: Sub-scores (Index 10) & Types
+    // Row 11: Sub-scores (Index 10) - เริ่มที่ I11 (Index 8) ถึง T11 (Index 19)
     setStyledCell(ws, 10, 1, 'A = แบบที่ 1', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
     setStyledCell(ws, 10, 5, compA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 10, 6, compB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 10, 7, compC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 9, holeA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 10, holeB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 11, holeC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 12, holeD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 13, hqA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 14, hqB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 15, hqC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 16, hqD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 17, devA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 18, devB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 19, devC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 20, devD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 8, holeA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 9, holeB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 10, holeC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 11, holeD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 12, hqA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 13, hqB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 14, hqC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 15, hqD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 16, devA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 17, devB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 18, devC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 19, devD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
 
-    // Labels row (Row 12 / Index 11)
+    // Labels row (Row 12 / Index 11) - เริ่มที่ I12 (Index 8) ถึง T12 (Index 19)
     setStyledCell(ws, 11, 1, 'B = แบบที่ 2', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
     setStyledCell(ws, 11, 5, 'A(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 11, 6, 'B(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 11, 7, 'C(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 9, 'A(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 10, 'B(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 11, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 12, 'D(4)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 13, 'A(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 14, 'B(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 15, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 16, 'D(2)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 17, 'A(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 18, 'B(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 19, 'C(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 20, 'D(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 8, 'A(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 9, 'B(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 10, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 11, 'D(4)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 12, 'A(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 13, 'B(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 14, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 15, 'D(2)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 16, 'A(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 17, 'B(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 18, 'C(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 19, 'D(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
 
     // Criteria Row 13 & 14 (Index 12 & 13)
     setStyledCell(ws, 12, 1, 'C = แบบที่ 3', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
@@ -935,7 +939,7 @@ function buildSheet1Improved(data) {
         { s: { r: 8, c: 4 }, e: { r: 8, c: 8 } },
         { s: { r: 8, c: 9 }, e: { r: 8, c: 12 } },
 
-        // Item 2 Merges
+        // Item 2 Merges (แก้ไขแล้ว)
         { s: { r: 9, c: 0 }, e: { r: 13, c: 0 } },
         { s: { r: 9, c: 4 }, e: { r: 9, c: 7 } },
         { s: { r: 9, c: 8 }, e: { r: 9, c: 11 } },
@@ -1486,7 +1490,7 @@ function openImagePreview(type) {
         case 'station1':
             imageUrl = IMAGE_DATA.station1;
             title = '📐 แบบประกอบการให้คะแนน สถานีที่ 1 (ABCD.jpg)';
-            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - หลังคา (แบบ A, B, C , D)';
+            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - หลังคา (แบบ A, B, C, D)';
             break;
         case 'station2_01':
             imageUrl = IMAGE_DATA.station2_01;
