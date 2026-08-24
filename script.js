@@ -715,7 +715,7 @@ function buildSheetSummaryImproved(data) {
 }
 
 // ============================================================
-// 2. ชีท: สถานีที่ 1 ภาคปฏิบัติ (Station 1 Sheet) - แก้ไขแล้ว
+// 2. ชีท: สถานีที่ 1 ภาคปฏิบัติ (Station 1 Sheet)
 // ============================================================
 function buildSheet1Improved(data) {
     const ws = {};
@@ -799,7 +799,7 @@ function buildSheet1Improved(data) {
     setStyledCell(ws, 8, 4, 'อุปกรณ์ละ 1 คะแนน', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 8, 9, 'ตัดจุดละ 1 คะแนน', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
 
-    // --- ข้อ 2: ความสมบูรณ์ตรงตามแบบ (Row 10-14 / Index 9-13) - แก้ไขแล้ว ---
+    // --- ข้อ 2: ความสมบูรณ์ตรงตามแบบ (Row 10-14 / Index 9-13) ---
     setStyledCell(ws, 9, 0, '2', { font: EXCEL_STYLES.fontPromptBold, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 9, 1, 'ความสมบูรณ์ตรงตามแบบ', { font: EXCEL_STYLES.fontPromptBold, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 9, 4, 'ระยะ d1 =  d3 (15)', { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillSubHeader });
@@ -811,7 +811,7 @@ function buildSheet1Improved(data) {
         f: '=F11+G11+H11+I11+J11+K11+L11+M11+N11+O11+P11+Q11+R11+S11+T11', font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0'
     });
 
-    // Row 11: Sub-scores (Index 10) - เริ่มที่ I11 (Index 8) ถึง T11 (Index 19)
+    // Row 11: Sub-scores (Index 10)
     setStyledCell(ws, 10, 1, 'A = แบบที่ 1', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
     setStyledCell(ws, 10, 5, compA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 10, 6, compB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
@@ -829,7 +829,7 @@ function buildSheet1Improved(data) {
     setStyledCell(ws, 10, 18, devC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 10, 19, devD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
 
-    // Labels row (Row 12 / Index 11) - เริ่มที่ I12 (Index 8) ถึง T12 (Index 19)
+    // Labels row (Row 12 / Index 11)
     setStyledCell(ws, 11, 1, 'B = แบบที่ 2', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
     setStyledCell(ws, 11, 5, 'A(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 11, 6, 'B(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
@@ -939,7 +939,7 @@ function buildSheet1Improved(data) {
         { s: { r: 8, c: 4 }, e: { r: 8, c: 8 } },
         { s: { r: 8, c: 9 }, e: { r: 8, c: 12 } },
 
-        // Item 2 Merges (แก้ไขแล้ว)
+        // Item 2 Merges
         { s: { r: 9, c: 0 }, e: { r: 13, c: 0 } },
         { s: { r: 9, c: 4 }, e: { r: 9, c: 7 } },
         { s: { r: 9, c: 8 }, e: { r: 9, c: 11 } },
@@ -1479,8 +1479,20 @@ function exportExcel() {
 }
 
 // ============================================================
-// Image Preview - ฟังก์ชันเปิดรูปภาพใน Popup
+// Image Preview - ฟังก์ชันเปิดรูปภาพใน Popup (พร้อมซูม)
 // ============================================================
+let currentZoom = 1;
+let translateX = 0;
+let translateY = 0;
+let isDragging = false;
+let startDragX = 0, startDragY = 0;
+let startTranslateX = 0, startTranslateY = 0;
+let isTouchDragging = false;
+let touchStartX = 0, touchStartY = 0;
+let touchTranslateX = 0, touchTranslateY = 0;
+let initialPinchDistance = 0;
+let initialPinchZoom = 1;
+
 function openImagePreview(type) {
     let imageUrl = '';
     let title = '';
@@ -1522,41 +1534,253 @@ function openImagePreview(type) {
     img.src = imageUrl;
     captionEl.textContent = caption;
 
-    // รีเซ็ตการซูม
-    img.classList.remove('zoomed');
+    // รีเซ็ตการซูมและตำแหน่ง
+    resetZoom();
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 // ============================================================
-// Close Image Preview
+// Reset Zoom
 // ============================================================
-function closeImagePreview(event) {
-    if (event && event.target !== event.currentTarget) return;
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
+function resetZoom() {
+    const img = document.getElementById('modalImage');
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    isDragging = false;
+    isTouchDragging = false;
+    img.style.transform = `scale(1) translate(0px, 0px)`;
+    img.style.cursor = 'zoom-in';
+    document.getElementById('modalCaption').textContent = '🖱️ คลิกหรือใช้นิ้วซูม • ลากเพื่อเลื่อน';
 }
 
 // ============================================================
-// Image Zoom - คลิกที่รูปเพื่อซูม
+// Helper Functions for Zoom
+// ============================================================
+function getDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function toggleZoom(e) {
+    if (currentZoom > 1.1) {
+        resetZoom();
+    } else {
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        zoomImage(1.5, e.clientX, e.clientY);
+    }
+}
+
+function zoomImage(delta, centerX, centerY) {
+    const newZoom = Math.min(Math.max(currentZoom + delta, 0.5), 5);
+    applyZoom(newZoom, centerX, centerY);
+}
+
+function applyZoom(newZoom, centerX, centerY) {
+    const img = document.getElementById('modalImage');
+    const container = img.parentElement;
+    const rect = container.getBoundingClientRect();
+    
+    const imgRect = img.getBoundingClientRect();
+    const imgCenterX = imgRect.left + imgRect.width / 2;
+    const imgCenterY = imgRect.top + imgRect.height / 2;
+    
+    const cx = centerX || imgCenterX;
+    const cy = centerY || imgCenterY;
+    
+    const ratio = newZoom / currentZoom;
+    const dx = (cx - imgCenterX) * (1 - ratio);
+    const dy = (cy - imgCenterY) * (1 - ratio);
+    
+    translateX += dx;
+    translateY += dy;
+    currentZoom = newZoom;
+    
+    applyTransform();
+    updateCursor();
+    updateCaption();
+}
+
+function applyTransform() {
+    const img = document.getElementById('modalImage');
+    const maxTranslate = 500 * (currentZoom - 0.5);
+    translateX = Math.min(Math.max(translateX, -maxTranslate), maxTranslate);
+    translateY = Math.min(Math.max(translateY, -maxTranslate), maxTranslate);
+    
+    img.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+}
+
+function updateCursor() {
+    const img = document.getElementById('modalImage');
+    if (currentZoom > 1.1) {
+        img.style.cursor = 'grab';
+    } else {
+        img.style.cursor = 'zoom-in';
+    }
+}
+
+function updateCaption() {
+    const caption = document.getElementById('modalCaption');
+    if (currentZoom > 1.1) {
+        caption.textContent = '🖱️ ลากเพื่อเลื่อน • คลิกเพื่อกลับขนาดเดิม';
+    } else {
+        caption.textContent = '🖱️ คลิกหรือใช้นิ้วซูม • ลากเพื่อเลื่อน';
+    }
+}
+
+// ============================================================
+// Image Zoom with Pinch & Scroll
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
     const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.addEventListener('click', function() {
-            this.classList.toggle('zoomed');
-        });
-    }
+    const modalContent = document.querySelector('.image-modal-body');
+    const modal = document.getElementById('imageModal');
+    const closeBtn = document.querySelector('.modal-close');
+    
+    if (!modalImg) return;
 
-    // ปิด Modal ด้วยปุ่ม ESC
+    // -------- 1. คลิกเพื่อสลับซูม (Desktop & Mobile) --------
+    modalImg.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleZoom(e);
+    });
+
+    // -------- 2. Scroll เพื่อซูม (Desktop) --------
+    modalImg.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        zoomImage(delta, e.clientX, e.clientY);
+    }, { passive: false });
+
+    // -------- 3. Pinch-to-Zoom (Mobile) --------
+    modalImg.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            initialPinchDistance = getDistance(touch1, touch2);
+            initialPinchZoom = currentZoom;
+        }
+    }, { passive: false });
+
+    modalImg.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const distance = getDistance(touch1, touch2);
+            const scale = distance / initialPinchDistance;
+            const newZoom = Math.min(Math.max(initialPinchZoom * scale, 0.5), 5);
+            
+            const centerX = (touch1.clientX + touch2.clientX) / 2;
+            const centerY = (touch1.clientY + touch2.clientY) / 2;
+            
+            applyZoom(newZoom, centerX, centerY);
+        }
+    }, { passive: false });
+
+    modalImg.addEventListener('touchend', function(e) {
+        if (e.touches.length < 2) {
+            updateCursor();
+        }
+    });
+
+    // -------- 4. ลากเลื่อนภาพเมื่อซูมแล้ว (Desktop) --------
+    modalImg.addEventListener('mousedown', function(e) {
+        if (currentZoom <= 1) return;
+        isDragging = true;
+        startDragX = e.clientX;
+        startDragY = e.clientY;
+        startTranslateX = translateX;
+        startTranslateY = translateY;
+        modalImg.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startDragX;
+        const dy = e.clientY - startDragY;
+        translateX = startTranslateX + dx;
+        translateY = startTranslateY + dy;
+        applyTransform();
+    });
+
+    document.addEventListener('mouseup', function() {
+        if (isDragging) {
+            isDragging = false;
+            updateCursor();
+        }
+    });
+
+    // -------- 5. ลากเลื่อนภาพเมื่อซูมแล้ว (Mobile) --------
+    modalImg.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1 && currentZoom > 1) {
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchTranslateX = translateX;
+            touchTranslateY = translateY;
+            isTouchDragging = true;
+        }
+    }, { passive: true });
+
+    modalImg.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 1 && isTouchDragging) {
+            const touch = e.touches[0];
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+            translateX = touchTranslateX + dx;
+            translateY = touchTranslateY + dy;
+            applyTransform();
+        }
+    }, { passive: true });
+
+    modalImg.addEventListener('touchend', function() {
+        isTouchDragging = false;
+    });
+
+    // -------- 6. รีเซ็ตเมื่อปิด Modal --------
+    const closeHandler = function() {
+        resetZoom();
+    };
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeImagePreview();
+            resetZoom();
+        }
+    });
+
+    closeBtn.addEventListener('click', function() {
+        closeImagePreview();
+        resetZoom();
+    });
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeImagePreview();
+            resetZoom();
         }
     });
 });
+
+// ============================================================
+// Close Image Preview
+// ============================================================
+function closeImagePreview(event) {
+    if (event && event.target && event.target !== event.currentTarget) {
+        if (event.target.closest('.image-modal-content')) return;
+    }
+    const modal = document.getElementById('imageModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    resetZoom();
+}
 
 // ============================================================
 // Export PDF (print)
