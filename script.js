@@ -15,14 +15,17 @@
 // ============================================================
 
 const IMAGE_DATA = {
-    // สถานีที่ 1: ABCD.jpg (เปลี่ยน YOUR_FILE_ID เป็น ID จริง)
+    // สถานีที่ 1: ABCD.jpg
     station1: 'https://drive.google.com/thumbnail?id=1XQVOugN74jlBElrgJybKyGn6Vz4MXqxz&sz=w800',
     
-    // สถานีที่ 2: ติดตั้งแผง 01.jpg (เปลี่ยน YOUR_FILE_ID เป็น ID จริง)
+    // สถานีที่ 2: ติดตั้งแผง 01.jpg
     station2_01: 'https://drive.google.com/thumbnail?id=1LPxB2DqwX-yEP0imxPdm-DLPnlvtKfya&sz=w800',
     
-    // สถานีที่ 2: ติดตั้งแผง 02.jpg (เปลี่ยน YOUR_FILE_ID เป็น ID จริง)
-    station2_02: 'https://drive.google.com/thumbnail?id=1_5OSWZMacozBkij-t_MIdUsPyIs0pnlw&sz=w800'
+    // สถานีที่ 2: ติดตั้งแผง 02.jpg
+    station2_02: 'https://drive.google.com/thumbnail?id=1_5OSWZMacozBkij-t_MIdUsPyIs0pnlw&sz=w800',
+    
+    // สถานีที่ 2: Wiring Diagram.jpg (เพิ่มใหม่)
+    station2_03: 'https://drive.google.com/thumbnail?id=1W2CRI_HWtIYqeirytEe1gPo8yKbumBbI&sz=w800'
 };
 
 // ============================================================
@@ -1502,7 +1505,7 @@ function openImagePreview(type) {
         case 'station1':
             imageUrl = IMAGE_DATA.station1;
             title = '📐 แบบประกอบการให้คะแนน สถานีที่ 1 (ABCD.jpg)';
-            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - หลังคา (แบบ A, B, C, D)';
+            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - ห้างค้าคอนกรีต (แบบ A, B, C)';
             break;
         case 'station2_01':
             imageUrl = IMAGE_DATA.station2_01;
@@ -1513,6 +1516,11 @@ function openImagePreview(type) {
             imageUrl = IMAGE_DATA.station2_02;
             title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 02.jpg)';
             caption = 'การวัดระยะติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 2)';
+            break;
+        case 'station2_03':
+            imageUrl = IMAGE_DATA.station2_03;
+            title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (Wiring Diagram.jpg)';
+            caption = 'วงจรภายในตู้ DC - Wiring Diagram';
             break;
         default:
             alert('ไม่พบภาพประกอบ');
@@ -1534,7 +1542,7 @@ function openImagePreview(type) {
     img.src = imageUrl;
     captionEl.textContent = caption;
 
-    // รีเซ็ตการซูมและตำแหน่ง
+    // รีเซ็ตการซูม
     resetZoom();
 
     modal.classList.add('active');
@@ -1638,7 +1646,6 @@ function updateCaption() {
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
     const modalImg = document.getElementById('modalImage');
-    const modalContent = document.querySelector('.image-modal-body');
     const modal = document.getElementById('imageModal');
     const closeBtn = document.querySelector('.modal-close');
     
@@ -1941,5 +1948,5 @@ document.addEventListener('keydown', function(e) {
 
 console.log('✅ ระบบบันทึกคะแนน ช่างติดตั้งโซลาร์เซลล์ ระดับ 1 พร้อมใช้งาน');
 console.log('📌 เปลี่ยนธีม: setTheme("light" | "dark" | "pastel")');
-console.log('📌 รูปภาพจาก Google Drive: เปลี่ยน YOUR_FILE_ID ใน IMAGE_DATA');
+console.log('📌 รูปภาพจาก Google Drive: station1, station2_01, station2_02, station2_03');
 console.log('📌 ตัวอย่างลิงก์: https://drive.google.com/uc?export=view&id=YOUR_FILE_ID');
