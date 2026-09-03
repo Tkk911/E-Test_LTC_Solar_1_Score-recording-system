@@ -2,35 +2,7 @@
 // ระบบบันทึกคะแนน ช่างติดตั้งโซลาร์เซลล์ ระดับ 1
 // ============================================================
 
-// ============================================================
-// IMAGE DATA - ลิงก์รูปภาพจาก Google Drive
-// ============================================================
-// 🔹 วิธีแปลงลิงก์ Google Drive ให้ใช้กับ <img> ได้:
-//    1. ไปที่ไฟล์ใน Google Drive → แชร์ → ตั้งค่า "ผู้ที่มีลิงก์"
-//    2. คัดลอกลิงก์: https://drive.google.com/file/d/[FILE_ID]/view
-//    3. นำ FILE_ID มาใส่ในลิงก์รูปแบบใดรูปแบบหนึ่งด้านล่าง:
-//       - https://drive.google.com/uc?export=view&id=FILE_ID
-//       - https://drive.google.com/thumbnail?id=FILE_ID&sz=w800
-//       - https://lh3.googleusercontent.com/d/FILE_ID
-// ============================================================
-
-const IMAGE_DATA = {
-    // สถานีที่ 1: ABCD.jpg
-    station1: 'https://drive.google.com/thumbnail?id=1XQVOugN74jlBElrgJybKyGn6Vz4MXqxz&sz=w800',
-    
-    // สถานีที่ 2: ติดตั้งแผง 01.jpg
-    station2_01: 'https://drive.google.com/thumbnail?id=1LPxB2DqwX-yEP0imxPdm-DLPnlvtKfya&sz=w800',
-    
-    // สถานีที่ 2: ติดตั้งแผง 02.jpg
-    station2_02: 'https://drive.google.com/thumbnail?id=1_5OSWZMacozBkij-t_MIdUsPyIs0pnlw&sz=w800',
-    
-    // สถานีที่ 2: Wiring Diagram.jpg (เพิ่มใหม่)
-    station2_03: 'https://drive.google.com/thumbnail?id=1W2CRI_HWtIYqeirytEe1gPo8yKbumBbI&sz=w800'
-};
-
-// ============================================================
 // DOM Helpers
-// ============================================================
 const $ = (id) => document.getElementById(id);
 
 function getVal(id) {
@@ -241,13 +213,551 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================================
+// Candidate Data Management (ระบบจัดการและโหลดข้อมูลผู้เข้าสอบ)
+// ============================================================
+
+let currentEditingCandidateId = null;
+let candidateFilterMode = 'latest5'; // 'latest5' or 'all'
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function formatTimeAgo(dateInput) {
+    if (!dateInput) return 'ไม่ระบุเวลา';
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return 'ไม่ระบุเวลา';
+
+    const now = new Date();
+    const diffSec = Math.floor((now - date) / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    if (diffSec < 45) return 'เมื่อสักครู่';
+    if (diffMin < 60) return `${diffMin} นาทีที่แล้ว`;
+    if (diffHour < 24) return `${diffHour} ชม. ที่แล้ว`;
+    if (diffDay < 7) return `${diffDay} วันที่แล้ว`;
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear() + 543;
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+function getSavedHistory() {
+    try {
+        let history = JSON.parse(localStorage.getItem('solarScoreHistory') || '[]');
+        let modified = false;
+        history = history.map((item, index) => {
+            if (!item.id) {
+                item.id = 'cand_' + (item.timestamp ? new Date(item.timestamp).getTime() : (Date.now() - (history.length - index) * 10000));
+                modified = true;
+            }
+            return item;
+        });
+        if (modified) {
+            localStorage.setItem('solarScoreHistory', JSON.stringify(history));
+        }
+        return history;
+    } catch (e) {
+        console.error('Error reading history:', e);
+        return [];
+    }
+}
+
+function applyCandidateData(candidate) {
+    if (!candidate) return;
+
+    ['candidateName', 'candidateName2', 'candidateName3'].forEach(id => {
+        const el = $(id);
+        if (el) el.value = candidate.candidateName || '';
+    });
+    ['testLocation', 'testLocation2', 'testLocation3'].forEach(id => {
+        const el = $(id);
+        if (el) el.value = candidate.testLocation || '';
+    });
+    ['testDate', 'testDate2', 'testDate3'].forEach(id => {
+        const el = $(id);
+        if (el) el.value = candidate.testDate || '';
+    });
+    ['panelNumber', 'panelNumber2', 'panelNumber3'].forEach(id => {
+        const el = $(id);
+        if (el) el.value = candidate.panelNumber || '';
+    });
+
+    const s1Fields = [
+        's1_safety_ppe', 's1_safety_wear', 's1_safety_practice',
+        's1_comp_a', 's1_comp_b', 's1_comp_c',
+        's1_hole_a', 's1_hole_b', 's1_hole_c', 's1_hole_d',
+        's1_holequal_a', 's1_holequal_b', 's1_holequal_c', 's1_holequal_d',
+        's1_device_a', 's1_device_b', 's1_device_c', 's1_device_d',
+        's1_strength_a', 's1_strength_b', 's1_strength_c', 's1_strength_d',
+        's1_torque_d', 's1_clean'
+    ];
+    s1Fields.forEach(f => setVal(f, candidate[f] !== undefined ? candidate[f] : 0));
+
+    const s2Fields = [
+        's2_safety_ppe', 's2_safety_practice',
+        's2_dist_left', 's2_dist_right', 's2_dist_top', 's2_dist_bottom', 's2_dist_d5',
+        's2_level_top', 's2_level_bottom',
+        's2_panel_care', 's2_device_complete',
+        's2_stability', 's2_torque',
+        's2_mc4', 's2_continuity', 's2_copper', 's2_polarity',
+        's2_wire_panel', 's2_wire_conduit', 's2_wire_spec',
+        's2_dc_ground', 's2_dc_polarity', 's2_dc_color', 's2_dc_strength',
+        's2_clean', 's2_inspect_physical', 's2_inspect_electrical'
+    ];
+    s2Fields.forEach(f => setVal(f, candidate[f] !== undefined ? candidate[f] : 0));
+
+    setVal('knowledgeCorrect', candidate.knowledgeCorrect !== undefined ? candidate.knowledgeCorrect : 0);
+    calculateAll();
+}
+
+function renderRecentCandidates() {
+    const history = getSavedHistory();
+    const grid = $('recentCandidatesGrid');
+    const badge = $('candidateCountBadge');
+    const headerCount = $('headerCandidateCount');
+
+    if (badge) badge.textContent = `${history.length} คน`;
+    if (headerCount) {
+        if (history.length > 0) {
+            headerCount.textContent = history.length;
+            headerCount.style.display = 'inline-flex';
+        } else {
+            headerCount.style.display = 'none';
+        }
+    }
+
+    const banner = $('editingBanner');
+    const clearBtn = $('btnClearSelection');
+    if (currentEditingCandidateId) {
+        const activeCand = history.find(h => h.id === currentEditingCandidateId);
+        if (activeCand && banner) {
+            banner.style.display = 'flex';
+            if ($('editingCandidateName')) $('editingCandidateName').textContent = activeCand.candidateName || 'ไม่ระบุชื่อ';
+            if ($('editingCandidateMeta')) {
+                const dateStr = formatDateTH(activeCand.testDate) || '-';
+                const panelStr = activeCand.panelNumber ? `แผง #${activeCand.panelNumber}` : '';
+                const locStr = activeCand.testLocation ? `(${activeCand.testLocation})` : '';
+                $('editingCandidateMeta').textContent = `${dateStr} ${panelStr ? '| ' + panelStr : ''} ${locStr}`;
+            }
+            if (clearBtn) clearBtn.style.display = 'inline-flex';
+        } else {
+            if (banner) banner.style.display = 'none';
+            if (clearBtn) clearBtn.style.display = 'none';
+        }
+    } else {
+        if (banner) banner.style.display = 'none';
+        if (clearBtn) clearBtn.style.display = 'none';
+    }
+
+    if (!grid) return;
+
+    if (history.length === 0) {
+        grid.innerHTML = `
+            <div class="candidate-empty-state">
+                <i class="fas fa-user-plus"></i>
+                <p>ยังไม่มีข้อมูลผู้เข้าสอบที่บันทึกไว้</p>
+                <span>เมื่อบันทึกข้อมูลการประเมิน ระบบจะแสดงรายชื่อ 5 คนล่าสุดที่นี่ เพื่อให้สามารถเลือกดึงข้อมูลมาแก้ไขได้ทันที</span>
+            </div>
+        `;
+        return;
+    }
+
+    const latest5 = history.slice().reverse().slice(0, 5);
+
+    grid.innerHTML = latest5.map((c, idx) => {
+        const isCurrent = (c.id === currentEditingCandidateId);
+        const rankNum = idx + 1;
+        const rankLabel = idx === 0 ? '#1 (ล่าสุด)' : `#${rankNum}`;
+        const totalScore = (typeof c.total === 'number') ? c.total.toFixed(1) : (parseFloat(c.total) || 0).toFixed(1);
+        const percent = (typeof c.percent === 'number') ? c.percent.toFixed(1) : (parseFloat(c.percent) || 0).toFixed(1);
+        const isPass = parseFloat(percent) >= 70 && (parseFloat(c.knowledge_score) >= 25);
+        const timeAgo = formatTimeAgo(c.updatedAt || c.timestamp);
+        const dateThai = formatDateTH(c.testDate) || 'ไม่ระบุวันที่';
+        const panelText = c.panelNumber ? `แผง #${c.panelNumber}` : 'ไม่ระบุแผง';
+
+        return `
+            <div class="candidate-card ${isCurrent ? 'is-active' : ''}" onclick="loadCandidate('${c.id}')" title="คลิกเพื่อดึงข้อมูลของ ${escapeHtml(c.candidateName || 'ผู้เข้าสอบ')} มาแก้ไข">
+                <div class="candidate-card-top">
+                    <span class="candidate-rank-badge ${idx === 0 ? 'rank-1' : ''}">${rankLabel}</span>
+                    <span class="candidate-time"><i class="far fa-clock"></i> ${timeAgo}</span>
+                </div>
+                <div class="candidate-name">
+                    <i class="fas fa-user-circle"></i>
+                    <span>${escapeHtml(c.candidateName || 'ไม่ระบุชื่อ')}</span>
+                </div>
+                <div class="candidate-info-row">
+                    <span><i class="fas fa-calendar-alt"></i> ${dateThai}</span>
+                    <span><i class="fas fa-solar-panel"></i> ${panelText}</span>
+                </div>
+                <div class="candidate-score-row">
+                    <div class="score-pill">
+                        <span class="score-val">${totalScore}</span>
+                        <span class="score-sub">/250 (${percent}%)</span>
+                    </div>
+                    <span class="badge-status ${isPass ? 'badge-pass' : 'badge-fail'}">
+                        ${isPass ? '<i class="fas fa-check-circle"></i> ผ่าน' : '<i class="fas fa-times-circle"></i> ไม่ผ่าน'}
+                    </span>
+                </div>
+                <div class="candidate-card-footer">
+                    <button type="button" class="btn btn-sm ${isCurrent ? 'btn-success' : 'btn-outline-primary'} btn-load-candidate" onclick="event.stopPropagation(); loadCandidate('${c.id}')">
+                        ${isCurrent ? '<i class="fas fa-check"></i> กำลังแก้ไขอยู่' : '<i class="fas fa-file-import"></i> ดึงข้อมูลแก้ไข'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function loadCandidate(candidateId) {
+    const history = getSavedHistory();
+    const candidate = history.find(h => h.id === candidateId);
+    if (!candidate) {
+        alert('⚠️ ไม่พบข้อมูลผู้เข้าสอบที่เลือก');
+        return;
+    }
+
+    currentEditingCandidateId = candidate.id;
+    applyCandidateData(candidate);
+    renderRecentCandidates();
+    renderModalCandidateList();
+
+    closeCandidateModal();
+
+    const infoCard = document.querySelector('.user-info-card');
+    if (infoCard) {
+        infoCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    showNotification(`✅ ดึงข้อมูลของ "${candidate.candidateName || 'ผู้เข้าสอบ'}" เรียบร้อยแล้ว สามารถแก้ไขข้อมูลได้ทันที`);
+}
+
+function resetEditingMode() {
+    currentEditingCandidateId = null;
+    renderRecentCandidates();
+    renderModalCandidateList();
+    showNotification('ℹ️ ออกจากโหมดแก้ไขข้อมูลแล้ว (สามารถกรอกข้อมูลผู้เข้าสอบคนใหม่ได้)');
+}
+
+function saveAsNewCandidate() {
+    currentEditingCandidateId = null;
+    saveData();
+}
+
+function deleteCandidate(candidateId, event) {
+    if (event) event.stopPropagation();
+    const history = getSavedHistory();
+    const candidate = history.find(h => h.id === candidateId);
+    const name = candidate ? candidate.candidateName : 'ผู้เข้าสอบ';
+
+    if (!confirm(`⚠️ คุณต้องการลบประวัติของ "${name}" ใช่หรือไม่?`)) {
+        return;
+    }
+
+    const updated = history.filter(h => h.id !== candidateId);
+    localStorage.setItem('solarScoreHistory', JSON.stringify(updated));
+
+    if (currentEditingCandidateId === candidateId) {
+        currentEditingCandidateId = null;
+    }
+
+    renderRecentCandidates();
+    renderModalCandidateList();
+    showNotification(`🗑️ ลบประวัติของ "${name}" เรียบร้อยแล้ว`);
+}
+
+function clearAllHistory() {
+    const history = getSavedHistory();
+    if (history.length === 0) {
+        alert('ℹ️ ไม่มีประวัติผู้เข้าสอบในระบบ');
+        return;
+    }
+
+    if (!confirm('⚠️ คุณต้องการลบประวัติผู้เข้าสอบทั้งหมดใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
+        return;
+    }
+
+    localStorage.removeItem('solarScoreHistory');
+    currentEditingCandidateId = null;
+    renderRecentCandidates();
+    renderModalCandidateList();
+    closeCandidateModal();
+    showNotification('🗑️ ล้างประวัติผู้เข้าสอบทั้งหมดเรียบร้อยแล้ว');
+}
+
+function openCandidateModal() {
+    const modal = $('candidateModal');
+    if (!modal) return;
+    const history = getSavedHistory();
+    if (history.length === 0) {
+        alert('ℹ️ ยังไม่มีประวัติข้อมูลผู้เข้าสอบที่บันทึกไว้ในระบบ\n\nเมื่อกรอกข้อมูลและกด "บันทึก" ระบบจะจัดเก็บประวัติไว้ที่นี่');
+        return;
+    }
+    candidateFilterMode = 'latest5';
+    if ($('candidateSearchInput')) $('candidateSearchInput').value = '';
+    updateFilterButtons();
+    renderModalCandidateList();
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCandidateModal() {
+    const modal = $('candidateModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+function closeCandidateModalOnBackdrop(event) {
+    if (event.target.id === 'candidateModal') {
+        closeCandidateModal();
+    }
+}
+
+function setCandidateFilter(mode) {
+    candidateFilterMode = mode;
+    updateFilterButtons();
+    renderModalCandidateList();
+}
+
+function updateFilterButtons() {
+    const btn5 = $('btnFilter5');
+    const btnAll = $('btnFilterAll');
+    if (btn5 && btnAll) {
+        btn5.classList.toggle('active', candidateFilterMode === 'latest5');
+        btnAll.classList.toggle('active', candidateFilterMode === 'all');
+    }
+}
+
+function filterCandidateList() {
+    renderModalCandidateList();
+}
+
+function renderModalCandidateList() {
+    const container = $('modalCandidateList');
+    if (!container) return;
+
+    const history = getSavedHistory();
+    const search = ($('candidateSearchInput')?.value || '').trim().toLowerCase();
+
+    let list = history.slice().reverse();
+
+    if (search) {
+        list = list.filter(c => {
+            const name = (c.candidateName || '').toLowerCase();
+            const loc = (c.testLocation || '').toLowerCase();
+            const panel = (c.panelNumber || '').toString().toLowerCase();
+            const date = (c.testDate || '').toLowerCase();
+            return name.includes(search) || loc.includes(search) || panel.includes(search) || date.includes(search);
+        });
+    } else if (candidateFilterMode === 'latest5') {
+        list = list.slice(0, 5);
+    }
+
+    if (list.length === 0) {
+        container.innerHTML = `
+            <div class="candidate-empty-state">
+                <i class="fas fa-search"></i>
+                <p>ไม่พบรายชื่อผู้เข้าสอบที่ตรงกับคำค้นหา</p>
+                <span>ลองค้นหาด้วยคำอื่น หรือกดแสดง "ทั้งหมด"</span>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = list.map((c, idx) => {
+        const isCurrent = (c.id === currentEditingCandidateId);
+        const rankNum = idx + 1;
+        const totalScore = (typeof c.total === 'number') ? c.total.toFixed(1) : (parseFloat(c.total) || 0).toFixed(1);
+        const percent = (typeof c.percent === 'number') ? c.percent.toFixed(1) : (parseFloat(c.percent) || 0).toFixed(1);
+        const isPass = parseFloat(percent) >= 70 && (parseFloat(c.knowledge_score) >= 25);
+        const timeAgo = formatTimeAgo(c.updatedAt || c.timestamp);
+        const dateThai = formatDateTH(c.testDate) || 'ไม่ระบุวันที่';
+        const panelText = c.panelNumber ? `แผง #${c.panelNumber}` : '-';
+
+        return `
+            <div class="modal-candidate-item ${isCurrent ? 'is-active' : ''}" onclick="loadCandidate('${c.id}')">
+                <div class="item-left">
+                    <div class="item-rank ${idx === 0 && candidateFilterMode === 'latest5' ? 'rank-1' : ''}">#${rankNum}</div>
+                    <div class="item-details">
+                        <div class="item-name-row">
+                            <span class="item-name">${escapeHtml(c.candidateName || 'ไม่ระบุชื่อ')}</span>
+                            ${isCurrent ? '<span class="badge-status badge-pass"><i class="fas fa-edit"></i> กำลังแก้ไข</span>' : ''}
+                        </div>
+                        <div class="item-meta">
+                            <span><i class="fas fa-calendar-alt"></i> ${dateThai}</span>
+                            <span><i class="fas fa-solar-panel"></i> ${panelText}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(c.testLocation || '-')}</span>
+                            <span><i class="far fa-clock"></i> ${timeAgo}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="item-score-badge">
+                        <div class="item-score-num">${totalScore} / 250</div>
+                        <div class="item-score-sub">${percent}% | <span class="badge-status ${isPass ? 'badge-pass' : 'badge-fail'}">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</span></div>
+                    </div>
+                    <div class="item-actions">
+                        <button type="button" class="btn btn-sm ${isCurrent ? 'btn-success' : 'btn-primary'}" onclick="event.stopPropagation(); loadCandidate('${c.id}')" title="ดึงข้อมูลมาแก้ไข">
+                            <i class="fas fa-file-import"></i> ${isCurrent ? 'แก้ไขอยู่' : 'ดึงข้อมูล'}
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteCandidate('${c.id}', event)" title="ลบข้อมูลนี้">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showNotification(message) {
+    const container = $('toastContainer') || document.body;
+    const toast = document.createElement('div');
+    toast.className = 'app-toast';
+    toast.innerHTML = `<i class="fas fa-check-circle" style="color: var(--success); font-size: 16px;"></i> <span>${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}
+
+// ============================================================
+// Drawing Modal Management (ป๊อบอัพแสดงภาพแบบประกอบการให้คะแนน)
+// ============================================================
+
+const DRAWING_DATA = {
+    station1: {
+        title: 'แบบชิ้นงานภาคปฏิบัติ สถานีที่ 1 (แบบ A, B, C, D)',
+        src: 'ABCD.jpg',
+        caption: '📌 สถานีที่ 1: ตรวจสอบระยะ d1=d3 (± 3 mm), ขนาดรูเจาะดอกสว่าน, ความสมบูรณ์ของรูเจาะ และการประกอบอุปกรณ์ครบถ้วนตามแบบ A, B, C, D'
+    },
+    station2_panel1: {
+        title: 'แบบติดตั้งแผงเซลล์แสงอาทิตย์ ส่วนที่ 1 (สถานีที่ 2)',
+        src: 'ติดตั้งแผง 01.jpg',
+        caption: '📌 สถานีที่ 2: ตรวจสอบระยะติดตั้ง 3 จุด (ซ้าย-ขวา d1=d3, บน d5=d7, ล่าง d8=d10, กลาง d6=d9 ± 3 mm) และระดับน้ำรางบน-ล่าง'
+    },
+    station2_panel2: {
+        title: 'แบบติดตั้งแผงเซลล์แสงอาทิตย์ ส่วนที่ 2 (สถานีที่ 2)',
+        src: 'ติดตั้งแผง 02.jpg',
+        caption: '📌 สถานีที่ 2: ตรวจสอบการประกอบโครงสร้าง แคลมป์ยึดแผง ความมั่นคง และการเคลื่อนย้ายรักษาแผง'
+    },
+    station2_wiring: {
+        title: 'แบบวงจรไฟฟ้า Wiring Diagram (สถานีที่ 2)',
+        src: 'Wiring Diagram.jpg',
+        caption: '📌 สถานีที่ 2: ตรวจสอบการเชื่อมต่อสาย PV Connector MC4, การเดินท่อสายไฟ, การต่อสายดิน, ขั้วไฟฟ้า และอุปกรณ์ภายในตู้ตัดต่อไฟฟ้า DC'
+    }
+};
+
+let currentDrawingKey = 'station1';
+let drawingZoomScale = 1;
+
+function openDrawingModal(drawingKey) {
+    const modal = $('drawingModal');
+    if (!modal) return;
+
+    if (drawingKey && DRAWING_DATA[drawingKey]) {
+        currentDrawingKey = drawingKey;
+    } else {
+        const isStation2 = document.getElementById('page-station2')?.classList.contains('active');
+        currentDrawingKey = isStation2 ? 'station2_panel1' : 'station1';
+    }
+
+    switchDrawing(currentDrawingKey);
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDrawingModal() {
+    const modal = $('drawingModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+function closeDrawingModalOnBackdrop(event) {
+    if (event.target.id === 'drawingModal') {
+        closeDrawingModal();
+    }
+}
+
+function switchDrawing(drawingKey) {
+    if (!DRAWING_DATA[drawingKey]) return;
+    currentDrawingKey = drawingKey;
+    const item = DRAWING_DATA[drawingKey];
+
+    document.querySelectorAll('.drawing-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === 'tabDraw_' + drawingKey);
+    });
+
+    const img = $('drawingImage');
+    const label = $('drawingImageLabel');
+    const caption = $('drawingCaption');
+    const link = $('drawingOpenNewTab');
+
+    if (img) img.src = item.src;
+    if (label) label.textContent = item.title;
+    if (caption) caption.textContent = item.caption;
+    if (link) link.href = item.src;
+
+    resetDrawingZoom();
+}
+
+function zoomDrawing(factor) {
+    const img = $('drawingImage');
+    if (!img) return;
+    drawingZoomScale = Math.min(Math.max(drawingZoomScale * factor, 0.5), 3.5);
+    img.style.transform = `scale(${drawingZoomScale})`;
+}
+
+function resetDrawingZoom() {
+    drawingZoomScale = 1;
+    const img = $('drawingImage');
+    if (img) img.style.transform = 'scale(1)';
+}
+
+function handleDrawingWheel(event) {
+    event.preventDefault();
+    if (event.deltaY < 0) {
+        zoomDrawing(1.15);
+    } else {
+        zoomDrawing(0.85);
+    }
+}
+
+// ============================================================
 // Save
 // ============================================================
 function saveData() {
     syncUserInfo();
+    const name = ($('candidateName').value || '').trim();
+    const loc = ($('testLocation').value || '').trim();
+
+    if (!name || !loc) {
+        alert('⚠️ กรุณากรอกชื่อ-สกุล และสถานที่ทดสอบ');
+        return;
+    }
+
     const data = {
-        candidateName: $('candidateName').value || '',
-        testLocation: $('testLocation').value || '',
+        candidateName: name,
+        testLocation: loc,
         testDate: $('testDate').value || '',
         panelNumber: $('panelNumber').value || '',
         s1_safety_ppe: getVal('s1_safety_ppe'),
@@ -309,13 +819,11 @@ function saveData() {
         percent: parseFloat($('summaryPercent').textContent) || 0,
     };
 
-    if (!data.candidateName || !data.testLocation) {
-        alert('⚠️ กรุณากรอกชื่อ-สกุล และสถานที่ทดสอบ');
-        return;
-    }
+    const isEditing = !!currentEditingCandidateId;
+    saveToLocal(data);
 
     const GAS_URL =
-        'https://script.google.com/macros/s/AKfycbxn5Psa63ILHDuj4BmfSIHG-u82Vk53vqzjpoiWHLkSgH58jqrkKQywEdBIwxNATxSs/exec';
+        'https://script.google.com/macros/s/AKfycbwcfuOLUw8irm6E-KR-SDloFiUzoN9PeHlAB9DUL6QaAMeboF6dvmJhikhd6-4d015J/exec';
 
     fetch(GAS_URL, {
             method: 'POST',
@@ -324,62 +832,53 @@ function saveData() {
             body: JSON.stringify(data),
         })
         .then(() => {
-            saveToLocal(data);
-            alert('✅ บันทึกข้อมูลสำเร็จ! (ส่งไปยัง Google Sheets และบันทึก Local Storage แล้ว)');
+            alert(isEditing ?
+                `✅ บันทึกการแก้ไขข้อมูลของ "${data.candidateName}" สำเร็จ! (ส่งไปยัง Google Sheets และอัปเดต Local Storage แล้ว)` :
+                `✅ บันทึกข้อมูลสำเร็จ! (ส่งไปยัง Google Sheets และบันทึก Local Storage แล้ว)`);
         })
         .catch(() => {
-            saveToLocal(data);
-            alert('⚠️ ไม่สามารถเชื่อมต่อ Google Sheets ได้ บันทึกไว้ใน Local Storage แทน');
+            alert(isEditing ?
+                `⚠️ ไม่สามารถเชื่อมต่อ Google Sheets ได้ แต่ได้อัปเดตการแก้ไขใน Local Storage เรียบร้อยแล้ว` :
+                `⚠️ ไม่สามารถเชื่อมต่อ Google Sheets ได้ บันทึกไว้ใน Local Storage แทน`);
         });
 }
 
 function saveToLocal(data) {
-    const history = JSON.parse(localStorage.getItem('solarScoreHistory') || '[]');
-    history.push({ ...data, timestamp: new Date().toISOString() });
+    const history = getSavedHistory();
+    if (currentEditingCandidateId) {
+        const idx = history.findIndex(h => h.id === currentEditingCandidateId);
+        if (idx !== -1) {
+            history[idx] = {
+                ...history[idx],
+                ...data,
+                id: currentEditingCandidateId,
+                updatedAt: new Date().toISOString()
+            };
+            localStorage.setItem('solarScoreHistory', JSON.stringify(history));
+            renderRecentCandidates();
+            renderModalCandidateList();
+            return;
+        }
+    }
+
+    const newId = 'cand_' + Date.now();
+    currentEditingCandidateId = newId;
+    history.push({
+        ...data,
+        id: newId,
+        timestamp: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    });
     localStorage.setItem('solarScoreHistory', JSON.stringify(history));
+    renderRecentCandidates();
+    renderModalCandidateList();
 }
 
 // ============================================================
-// Load
+// Load (Opens candidate modal with 5 latest candidates)
 // ============================================================
 function loadData() {
-    const history = JSON.parse(localStorage.getItem('solarScoreHistory') || '[]');
-    if (history.length === 0) {
-        alert('ℹ️ ไม่มีข้อมูลบันทึกใน Local Storage');
-        return;
-    }
-    const last = history[history.length - 1];
-
-    ['candidateName', 'candidateName2', 'candidateName3'].forEach(id => $(id).value = last.candidateName || '');
-    ['testLocation', 'testLocation2', 'testLocation3'].forEach(id => $(id).value = last.testLocation || '');
-    ['testDate', 'testDate2', 'testDate3'].forEach(id => $(id).value = last.testDate || '');
-    ['panelNumber', 'panelNumber2', 'panelNumber3'].forEach(id => $(id).value = last.panelNumber || '');
-
-    const s1Fields = ['s1_safety_ppe', 's1_safety_wear', 's1_safety_practice',
-        's1_comp_a', 's1_comp_b', 's1_comp_c',
-        's1_hole_a', 's1_hole_b', 's1_hole_c', 's1_hole_d',
-        's1_holequal_a', 's1_holequal_b', 's1_holequal_c', 's1_holequal_d',
-        's1_device_a', 's1_device_b', 's1_device_c', 's1_device_d',
-        's1_strength_a', 's1_strength_b', 's1_strength_c', 's1_strength_d',
-        's1_torque_d', 's1_clean'
-    ];
-    s1Fields.forEach(f => setVal(f, last[f] || 0));
-
-    const s2Fields = ['s2_safety_ppe', 's2_safety_practice',
-        's2_dist_left', 's2_dist_right', 's2_dist_top', 's2_dist_bottom', 's2_dist_d5',
-        's2_level_top', 's2_level_bottom',
-        's2_panel_care', 's2_device_complete',
-        's2_stability', 's2_torque',
-        's2_mc4', 's2_continuity', 's2_copper', 's2_polarity',
-        's2_wire_panel', 's2_wire_conduit', 's2_wire_spec',
-        's2_dc_ground', 's2_dc_polarity', 's2_dc_color', 's2_dc_strength',
-        's2_clean', 's2_inspect_physical', 's2_inspect_electrical'
-    ];
-    s2Fields.forEach(f => setVal(f, last[f] || 0));
-
-    setVal('knowledgeCorrect', last.knowledgeCorrect || 0);
-    calculateAll();
-    alert('✅ โหลดข้อมูลล่าสุดสำเร็จ');
+    openCandidateModal();
 }
 
 // ============================================================
@@ -387,6 +886,8 @@ function loadData() {
 // ============================================================
 function clearAll() {
     if (!confirm('⚠️ คุณต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?')) return;
+
+    resetEditingMode();
 
     document.querySelectorAll('input[type="number"], input[type="text"], input[type="date"]').forEach(el => {
         if (el.id !== 'knowledgeScore' && !el.id.includes('candidateName') &&
@@ -483,12 +984,12 @@ const EXCEL_STYLES = {
     fontHeader: { name: 'Prompt', sz: 10, bold: true, color: { rgb: 'FFFFFF' } },
     fontAlert: { name: 'Prompt', sz: 10, bold: true, color: { rgb: 'C00000' } },
     
-    fillHeader: { fgColor: { rgb: '4472C4' } },
-    fillSubHeader: { fgColor: { rgb: 'E7E6E6' } },
-    fillScore: { fgColor: { rgb: 'FFF2CC' } },
-    fillMaxScore: { fgColor: { rgb: 'E2EFDA' } },
-    fillTotal: { fgColor: { rgb: 'FFC000' } },
-    fillHighlight: { fgColor: { rgb: 'FFE699' } },
+    fillHeader: { fgColor: { rgb: '4472C4' } },      // Royal Blue
+    fillSubHeader: { fgColor: { rgb: 'E7E6E6' } },   // Soft Gray
+    fillScore: { fgColor: { rgb: 'FFF2CC' } },       // Soft Yellow (Input score)
+    fillMaxScore: { fgColor: { rgb: 'E2EFDA' } },    // Soft Green (Max score)
+    fillTotal: { fgColor: { rgb: 'FFC000' } },       // Gold / Amber (Grand Total)
+    fillHighlight: { fgColor: { rgb: 'FFE699' } },   // Accent highlight
     
     borderThin: {
         top: { style: 'thin', color: { rgb: 'B0B0B0' } },
@@ -723,7 +1224,7 @@ function buildSheetSummaryImproved(data) {
 function buildSheet1Improved(data) {
     const ws = {};
     const MAX_ROW = 24;
-    const MAX_COL = 22;
+    const MAX_COL = 22; // Column A to W (0 to 22)
 
     const ppe = getVal('s1_safety_ppe'),
         wear = getVal('s1_safety_wear'),
@@ -811,44 +1312,44 @@ function buildSheet1Improved(data) {
     setStyledCell(ws, 9, 16, 'อุปกรณ์ครบถ้วน (10)', { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillSubHeader });
     setStyledCell(ws, 9, 21, 40, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillMaxScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 9, 22, s1_comp, {
-        f: '=F11+G11+H11+I11+J11+K11+L11+M11+N11+O11+P11+Q11+R11+S11+T11', font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0'
+        f: '=F11+G11+H11+J11+K11+L11+M11+N11+O11+P11+Q11+R11+S11+T11+U11', font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0'
     });
 
-    // Row 11: Sub-scores (Index 10)
+    // Row 11: Sub-scores (Index 10) & Types
     setStyledCell(ws, 10, 1, 'A = แบบที่ 1', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
     setStyledCell(ws, 10, 5, compA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 10, 6, compB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
     setStyledCell(ws, 10, 7, compC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 8, holeA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 9, holeB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 10, holeC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 11, holeD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 12, hqA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 13, hqB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 14, hqC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 15, hqD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 16, devA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 17, devB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 18, devC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
-    setStyledCell(ws, 10, 19, devD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 9, holeA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 10, holeB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 11, holeC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 12, holeD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 13, hqA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 14, hqB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 15, hqC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 16, hqD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 17, devA, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 18, devB, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 19, devC, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
+    setStyledCell(ws, 10, 20, devD, { font: EXCEL_STYLES.fontPromptBold, fill: EXCEL_STYLES.fillScore, alignment: EXCEL_STYLES.alignCenter, z: '0.0' });
 
     // Labels row (Row 12 / Index 11)
     setStyledCell(ws, 11, 1, 'B = แบบที่ 2', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
     setStyledCell(ws, 11, 5, 'A(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 11, 6, 'B(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
     setStyledCell(ws, 11, 7, 'C(5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 8, 'A(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 9, 'B(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 10, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 11, 'D(4)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 12, 'A(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 13, 'B(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 14, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 15, 'D(2)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 16, 'A(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 17, 'B(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 18, 'C(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
-    setStyledCell(ws, 11, 19, 'D(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 9, 'A(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 10, 'B(3)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 11, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 12, 'D(4)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 13, 'A(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 14, 'B(1.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 15, 'C(0)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 16, 'D(2)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 17, 'A(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 18, 'B(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 19, 'C(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
+    setStyledCell(ws, 11, 20, 'D(2.5)', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignCenter });
 
     // Criteria Row 13 & 14 (Index 12 & 13)
     setStyledCell(ws, 12, 1, 'C = แบบที่ 3', { font: EXCEL_STYLES.fontPrompt, alignment: EXCEL_STYLES.alignLeft });
@@ -1009,7 +1510,7 @@ function buildSheet1Improved(data) {
 function buildSheet2Improved(data) {
     const ws = {};
     const MAX_ROW = 35;
-    const MAX_COL = 28;
+    const MAX_COL = 28; // Column A to AC (0 to 28)
 
     const s2_ppe = getVal('s2_safety_ppe'),
         s2_prac = getVal('s2_safety_practice');
@@ -1381,14 +1882,16 @@ function buildSheet2Improved(data) {
 // ============================================================
 function buildSheetKnowledgeImproved(data) {
     const ws = {};
-    const MAX_ROW = 61;
-    const MAX_COL = 4;
+    const MAX_ROW = 61; // Row 1 to 62 in Excel
+    const MAX_COL = 4;  // Column A to E (0 to 4)
     const userCorrect = Math.round(data.knowledgeCorrect || 0);
 
+    // Header 1: Title (A1:E1)
     setStyledCell(ws, 0, 0, 'ตารางเทียบคะแนนภาคความรู้', {
         font: EXCEL_STYLES.fontBigTitle, alignment: EXCEL_STYLES.alignCenter, border: false
     });
 
+    // Header 2: Table Columns (A2:E2)
     const kHeaders = [
         'จำนวนข้อสอบ',
         'ข้อที่ทำได้',
@@ -1402,9 +1905,10 @@ function buildSheetKnowledgeImproved(data) {
         });
     });
 
+    // Rows 1 to 60 (Row 3 to 62 in Excel / Index 2 to 61)
     for (let i = 1; i <= 60; i++) {
-        const rowIdx = i + 1;
-        const excelRow = i + 2;
+        const rowIdx = i + 1; // 0-based row index
+        const excelRow = i + 2; // 1-based Excel row number
         const isUserScore = (i === userCorrect);
         const isPass = i >= 30;
         const passText = isPass ? 'ผ่าน  สามารถสอบภาคความสามารถต่อไปได้' : 'ไม่ผ่าน  ไม่สามารถสอบภาคความสามารถต่อไปได้';
@@ -1415,14 +1919,23 @@ function buildSheetKnowledgeImproved(data) {
             border: EXCEL_STYLES.borderThin
         };
 
-        setStyledCell(ws, rowIdx, 0, 60, { ...rowStyle, alignment: EXCEL_STYLES.alignCenter });
-        setStyledCell(ws, rowIdx, 1, i, { ...rowStyle, alignment: EXCEL_STYLES.alignCenter });
+        // Col A: 60
+        setStyledCell(ws, rowIdx, 0, 60, {
+            ...rowStyle, alignment: EXCEL_STYLES.alignCenter
+        });
+        // Col B: ข้อที่ทำได้
+        setStyledCell(ws, rowIdx, 1, i, {
+            ...rowStyle, alignment: EXCEL_STYLES.alignCenter
+        });
+        // Col C: คะแนนที่ได้ (เต็ม 50)
         setStyledCell(ws, rowIdx, 2, (i / 60) * 50, {
             ...rowStyle, f: `=(B${excelRow}/A${excelRow})*50`, alignment: EXCEL_STYLES.alignCenter, z: '0.00'
         });
+        // Col D: 20%
         setStyledCell(ws, rowIdx, 3, ((i / 60) * 50 * 20) / 50, {
             ...rowStyle, f: `=(C${excelRow}*20)/50`, alignment: EXCEL_STYLES.alignCenter, z: '0.00'
         });
+        // Col E: ผลการประเมิน
         setStyledCell(ws, rowIdx, 4, passText, {
             ...rowStyle, alignment: EXCEL_STYLES.alignLeft, font: isPass ? (isUserScore ? EXCEL_STYLES.fontPromptBold : EXCEL_STYLES.fontPrompt) : { name: 'Prompt', sz: 10, color: { rgb: 'A00000' } }
         });
@@ -1459,6 +1972,7 @@ function exportExcel() {
         
         const wb = XLSX.utils.book_new();
 
+        // สร้าง 4 แผ่นงานตามลำดับมาตรฐานของกรมพัฒนาฝีมือแรงงาน
         const wsSummary = buildSheetSummaryImproved(data);
         const wsStation1 = buildSheet1Improved(data);
         const wsStation2 = buildSheet2Improved(data);
@@ -1479,314 +1993,6 @@ function exportExcel() {
         alert('❌ Export Excel ไม่สำเร็จ: ' + e.message);
         console.error(e);
     }
-}
-
-// ============================================================
-// Image Preview - ฟังก์ชันเปิดรูปภาพใน Popup (พร้อมซูม)
-// ============================================================
-let currentZoom = 1;
-let translateX = 0;
-let translateY = 0;
-let isDragging = false;
-let startDragX = 0, startDragY = 0;
-let startTranslateX = 0, startTranslateY = 0;
-let isTouchDragging = false;
-let touchStartX = 0, touchStartY = 0;
-let touchTranslateX = 0, touchTranslateY = 0;
-let initialPinchDistance = 0;
-let initialPinchZoom = 1;
-
-function openImagePreview(type) {
-    let imageUrl = '';
-    let title = '';
-    let caption = '';
-
-    switch(type) {
-        case 'station1':
-            imageUrl = IMAGE_DATA.station1;
-            title = '📐 แบบประกอบการให้คะแนน สถานีที่ 1 (ABCD.jpg)';
-            caption = 'แบบประกอบการให้คะแนน สถานีที่ 1 - ห้างค้าคอนกรีต (แบบ A, B, C)';
-            break;
-        case 'station2_01':
-            imageUrl = IMAGE_DATA.station2_01;
-            title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 01.jpg)';
-            caption = 'การวัดระยะติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 1)';
-            break;
-        case 'station2_02':
-            imageUrl = IMAGE_DATA.station2_02;
-            title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (ติดตั้งแผง 02.jpg)';
-            caption = 'การวัดระยะติดตั้งแผงโซลาร์เซลล์ (ภาพที่ 2)';
-            break;
-        case 'station2_03':
-            imageUrl = IMAGE_DATA.station2_03;
-            title = '📐 ภาพประกอบการให้คะแนน สถานีที่ 2 (Wiring Diagram.jpg)';
-            caption = 'วงจรภายในตู้ DC - Wiring Diagram';
-            break;
-        default:
-            alert('ไม่พบภาพประกอบ');
-            return;
-    }
-
-    // ตรวจสอบว่ามีลิงก์รูปภาพหรือไม่
-    if (!imageUrl || imageUrl === '' || imageUrl.includes('YOUR_FILE_ID')) {
-        alert('⚠️ กรุณาเปลี่ยน YOUR_FILE_ID เป็น File ID จริงจาก Google Drive');
-        return;
-    }
-
-    const modal = document.getElementById('imageModal');
-    const img = document.getElementById('modalImage');
-    const titleEl = document.getElementById('modalTitle');
-    const captionEl = document.getElementById('modalCaption');
-
-    titleEl.innerHTML = `<i class="fas fa-image"></i> ${title}`;
-    img.src = imageUrl;
-    captionEl.textContent = caption;
-
-    // รีเซ็ตการซูม
-    resetZoom();
-
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-// ============================================================
-// Reset Zoom
-// ============================================================
-function resetZoom() {
-    const img = document.getElementById('modalImage');
-    currentZoom = 1;
-    translateX = 0;
-    translateY = 0;
-    isDragging = false;
-    isTouchDragging = false;
-    img.style.transform = `scale(1) translate(0px, 0px)`;
-    img.style.cursor = 'zoom-in';
-    document.getElementById('modalCaption').textContent = '🖱️ คลิกหรือใช้นิ้วซูม • ลากเพื่อเลื่อน';
-}
-
-// ============================================================
-// Helper Functions for Zoom
-// ============================================================
-function getDistance(touch1, touch2) {
-    const dx = touch1.clientX - touch2.clientX;
-    const dy = touch1.clientY - touch2.clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
-function toggleZoom(e) {
-    if (currentZoom > 1.1) {
-        resetZoom();
-    } else {
-        const rect = e.target.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        zoomImage(1.5, e.clientX, e.clientY);
-    }
-}
-
-function zoomImage(delta, centerX, centerY) {
-    const newZoom = Math.min(Math.max(currentZoom + delta, 0.5), 5);
-    applyZoom(newZoom, centerX, centerY);
-}
-
-function applyZoom(newZoom, centerX, centerY) {
-    const img = document.getElementById('modalImage');
-    const container = img.parentElement;
-    const rect = container.getBoundingClientRect();
-    
-    const imgRect = img.getBoundingClientRect();
-    const imgCenterX = imgRect.left + imgRect.width / 2;
-    const imgCenterY = imgRect.top + imgRect.height / 2;
-    
-    const cx = centerX || imgCenterX;
-    const cy = centerY || imgCenterY;
-    
-    const ratio = newZoom / currentZoom;
-    const dx = (cx - imgCenterX) * (1 - ratio);
-    const dy = (cy - imgCenterY) * (1 - ratio);
-    
-    translateX += dx;
-    translateY += dy;
-    currentZoom = newZoom;
-    
-    applyTransform();
-    updateCursor();
-    updateCaption();
-}
-
-function applyTransform() {
-    const img = document.getElementById('modalImage');
-    const maxTranslate = 500 * (currentZoom - 0.5);
-    translateX = Math.min(Math.max(translateX, -maxTranslate), maxTranslate);
-    translateY = Math.min(Math.max(translateY, -maxTranslate), maxTranslate);
-    
-    img.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
-}
-
-function updateCursor() {
-    const img = document.getElementById('modalImage');
-    if (currentZoom > 1.1) {
-        img.style.cursor = 'grab';
-    } else {
-        img.style.cursor = 'zoom-in';
-    }
-}
-
-function updateCaption() {
-    const caption = document.getElementById('modalCaption');
-    if (currentZoom > 1.1) {
-        caption.textContent = '🖱️ ลากเพื่อเลื่อน • คลิกเพื่อกลับขนาดเดิม';
-    } else {
-        caption.textContent = '🖱️ คลิกหรือใช้นิ้วซูม • ลากเพื่อเลื่อน';
-    }
-}
-
-// ============================================================
-// Image Zoom with Pinch & Scroll
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    const modalImg = document.getElementById('modalImage');
-    const modal = document.getElementById('imageModal');
-    const closeBtn = document.querySelector('.modal-close');
-    
-    if (!modalImg) return;
-
-    // -------- 1. คลิกเพื่อสลับซูม (Desktop & Mobile) --------
-    modalImg.addEventListener('click', function(e) {
-        e.stopPropagation();
-        toggleZoom(e);
-    });
-
-    // -------- 2. Scroll เพื่อซูม (Desktop) --------
-    modalImg.addEventListener('wheel', function(e) {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.1 : 0.1;
-        zoomImage(delta, e.clientX, e.clientY);
-    }, { passive: false });
-
-    // -------- 3. Pinch-to-Zoom (Mobile) --------
-    modalImg.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const touch1 = e.touches[0];
-            const touch2 = e.touches[1];
-            initialPinchDistance = getDistance(touch1, touch2);
-            initialPinchZoom = currentZoom;
-        }
-    }, { passive: false });
-
-    modalImg.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const touch1 = e.touches[0];
-            const touch2 = e.touches[1];
-            const distance = getDistance(touch1, touch2);
-            const scale = distance / initialPinchDistance;
-            const newZoom = Math.min(Math.max(initialPinchZoom * scale, 0.5), 5);
-            
-            const centerX = (touch1.clientX + touch2.clientX) / 2;
-            const centerY = (touch1.clientY + touch2.clientY) / 2;
-            
-            applyZoom(newZoom, centerX, centerY);
-        }
-    }, { passive: false });
-
-    modalImg.addEventListener('touchend', function(e) {
-        if (e.touches.length < 2) {
-            updateCursor();
-        }
-    });
-
-    // -------- 4. ลากเลื่อนภาพเมื่อซูมแล้ว (Desktop) --------
-    modalImg.addEventListener('mousedown', function(e) {
-        if (currentZoom <= 1) return;
-        isDragging = true;
-        startDragX = e.clientX;
-        startDragY = e.clientY;
-        startTranslateX = translateX;
-        startTranslateY = translateY;
-        modalImg.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mousemove', function(e) {
-        if (!isDragging) return;
-        const dx = e.clientX - startDragX;
-        const dy = e.clientY - startDragY;
-        translateX = startTranslateX + dx;
-        translateY = startTranslateY + dy;
-        applyTransform();
-    });
-
-    document.addEventListener('mouseup', function() {
-        if (isDragging) {
-            isDragging = false;
-            updateCursor();
-        }
-    });
-
-    // -------- 5. ลากเลื่อนภาพเมื่อซูมแล้ว (Mobile) --------
-    modalImg.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 1 && currentZoom > 1) {
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            touchTranslateX = translateX;
-            touchTranslateY = translateY;
-            isTouchDragging = true;
-        }
-    }, { passive: true });
-
-    modalImg.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 1 && isTouchDragging) {
-            const touch = e.touches[0];
-            const dx = touch.clientX - touchStartX;
-            const dy = touch.clientY - touchStartY;
-            translateX = touchTranslateX + dx;
-            translateY = touchTranslateY + dy;
-            applyTransform();
-        }
-    }, { passive: true });
-
-    modalImg.addEventListener('touchend', function() {
-        isTouchDragging = false;
-    });
-
-    // -------- 6. รีเซ็ตเมื่อปิด Modal --------
-    const closeHandler = function() {
-        resetZoom();
-    };
-
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeImagePreview();
-            resetZoom();
-        }
-    });
-
-    closeBtn.addEventListener('click', function() {
-        closeImagePreview();
-        resetZoom();
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeImagePreview();
-            resetZoom();
-        }
-    });
-});
-
-// ============================================================
-// Close Image Preview
-// ============================================================
-function closeImagePreview(event) {
-    if (event && event.target && event.target !== event.currentTarget) {
-        if (event.target.closest('.image-modal-content')) return;
-    }
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-    resetZoom();
 }
 
 // ============================================================
@@ -1937,6 +2143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     calculateAll();
+    renderRecentCandidates();
 });
 
 document.addEventListener('keydown', function(e) {
@@ -1944,9 +2151,11 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         saveData();
     }
+    if (e.key === 'Escape') {
+        closeCandidateModal();
+        closeDrawingModal();
+    }
 });
 
 console.log('✅ ระบบบันทึกคะแนน ช่างติดตั้งโซลาร์เซลล์ ระดับ 1 พร้อมใช้งาน');
 console.log('📌 เปลี่ยนธีม: setTheme("light" | "dark" | "pastel")');
-console.log('📌 รูปภาพจาก Google Drive: station1, station2_01, station2_02, station2_03');
-console.log('📌 ตัวอย่างลิงก์: https://drive.google.com/uc?export=view&id=YOUR_FILE_ID');
