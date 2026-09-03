@@ -33,7 +33,7 @@
                     <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="มืด"><i class="fas fa-moon"></i></button>
                     <button class="theme-btn" data-theme="pastel" onclick="setTheme('pastel')" title="พาสเทล"><i class="fas fa-palette"></i></button>
                 </div>
-                <button class="btn btn-outline" onclick="loadData()"><i class="fas fa-sync-alt"></i> โหลด</button>
+                <button class="btn btn-outline" onclick="loadData()" title="คลิกเพื่อเลือกและดึงข้อมูลผู้เข้าสอบ"><i class="fas fa-folder-open"></i> โหลดข้อมูล <span class="badge-count" id="headerCandidateCount" style="display:none; margin-left:4px;"></span></button>
             </div>
         </div>
     </header>
@@ -57,6 +57,46 @@
     <!-- MAIN CONTENT -->
     <!-- ========================================================== -->
     <main class="main-content">
+
+        <!-- ========================================================== -->
+        <!-- RECENT CANDIDATES SECTION (5 คนล่าสุด) -->
+        <!-- ========================================================== -->
+        <section class="card recent-candidates-card" id="recentCandidatesSection">
+            <div class="recent-header">
+                <div class="recent-title">
+                    <i class="fas fa-user-clock"></i>
+                    <h3>รายชื่อผู้เข้าสอบล่าสุด (5 คน)</h3>
+                    <span class="badge-count" id="candidateCountBadge">0 คน</span>
+                </div>
+                <div class="recent-actions">
+                    <button class="btn btn-sm btn-outline" onclick="openCandidateModal()">
+                        <i class="fas fa-list"></i> ดูประวัติทั้งหมด / ค้นหา
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" id="btnClearSelection" onclick="resetEditingMode()" style="display:none;">
+                        <i class="fas fa-times"></i> ยกเลิกการเลือก
+                    </button>
+                </div>
+            </div>
+
+            <!-- Editing banner when candidate is selected -->
+            <div class="editing-banner" id="editingBanner" style="display:none;">
+                <div class="editing-info">
+                    <span class="editing-badge"><i class="fas fa-pen"></i> กำลังแก้ไขข้อมูล</span>
+                    <span class="editing-name" id="editingCandidateName">-</span>
+                    <span class="editing-meta" id="editingCandidateMeta">-</span>
+                </div>
+                <div class="editing-btn-group">
+                    <button class="btn btn-xs btn-outline-success" onclick="saveData()"><i class="fas fa-save"></i> บันทึกการแก้ไข</button>
+                    <button class="btn btn-xs btn-outline-primary" onclick="saveAsNewCandidate()"><i class="fas fa-user-plus"></i> บันทึกเป็นคนใหม่</button>
+                    <button class="btn btn-xs btn-outline-danger" onclick="resetEditingMode()"><i class="fas fa-times"></i> ออกจากโหมดแก้ไข</button>
+                </div>
+            </div>
+
+            <!-- The 5 Candidates Grid -->
+            <div class="recent-candidates-grid" id="recentCandidatesGrid">
+                <!-- Dynamic cards will be rendered here -->
+            </div>
+        </section>
 
         <!-- ========================================================== -->
         <!-- PAGE 1: STATION 1 -->
@@ -87,19 +127,15 @@
                 </div>
             </section>
 
-            <!-- Image Preview Button - Station 1 -->
-            <div style="margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap;">
-                <button class="btn btn-info" onclick="openImagePreview('station1')">
-                    <i class="fas fa-image"></i> ดูแบบประกอบการให้คะแนน (ABCD.jpg)
-                </button>
-            </div>
-
             <!-- Station 1 -->
             <section class="card station-card">
                 <div class="card-header station-1-header">
                     <i class="fas fa-tools"></i>
                     <h2>สถานีที่ 1: ภาคปฏิบัติ</h2>
                     <span class="badge"><i class="fas fa-star"></i> คะแนนเต็ม 100</span>
+                    <button type="button" class="btn-view-drawing" onclick="openDrawingModal('station1')">
+                        <i class="fas fa-image"></i> ดูแบบประกอบ (ABCD)
+                    </button>
                 </div>
                 <div class="card-body">
 
@@ -160,6 +196,9 @@
                         <div class="score-group-title">
                             <i class="fas fa-check-double"></i> 2. ความสมบูรณ์ตรงตามแบบ
                             <span class="max-badge">40 คะแนน</span>
+                            <button type="button" class="btn-inline-drawing" onclick="openDrawingModal('station1')">
+                                <i class="fas fa-search-plus"></i> ดูแบบ ABCD
+                            </button>
                         </div>
                         <div class="score-table">
                             <div class="score-row">
@@ -216,6 +255,9 @@
                         <div class="score-group-title">
                             <i class="fas fa-weight-hanging"></i> 3. ความแข็งแรง
                             <span class="max-badge">40 คะแนน</span>
+                            <button type="button" class="btn-inline-drawing" onclick="openDrawingModal('station1')">
+                                <i class="fas fa-search-plus"></i> ดูแบบ ABCD
+                            </button>
                         </div>
                         <div class="score-table">
                             <div class="score-row">
@@ -306,24 +348,19 @@
                 </div>
             </section>
 
-		<!-- Image Preview Buttons - Station 2 -->
-			<div style="margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap;">
-    			<button class="btn btn-info" onclick="openImagePreview('station2_01')">
-        		<i class="fas fa-image"></i> ดูภาพประกอบที่ 1 (ติดตั้งแผง 01.jpg)
-    			</button>
-    			<button class="btn btn-info" onclick="openImagePreview('station2_02')">
-        		<i class="fas fa-image"></i> ดูภาพประกอบที่ 2 (ติดตั้งแผง 02.jpg)
-    			</button>
-    			<button class="btn btn-info" onclick="openImagePreview('station2_03')">
-        		<i class="fas fa-image"></i> ดูภาพที่ 3 Wiring Diagram (วงจรภายในตู้)
-    			</button>
-			</div>
-
             <section class="card station-card">
                 <div class="card-header station-2-header">
                     <i class="fas fa-bolt"></i>
                     <h2>สถานีที่ 2: ภาคปฏิบัติ</h2>
                     <span class="badge"><i class="fas fa-star"></i> คะแนนเต็ม 100</span>
+                    <div style="display:flex; gap:6px; margin-left:auto; flex-wrap:wrap;">
+                        <button type="button" class="btn-view-drawing" onclick="openDrawingModal('station2_panel1')">
+                            <i class="fas fa-solar-panel"></i> ดูแบบติดตั้งแผง
+                        </button>
+                        <button type="button" class="btn-view-drawing" onclick="openDrawingModal('station2_wiring')">
+                            <i class="fas fa-project-diagram"></i> ดู Wiring Diagram
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
 
@@ -367,7 +404,12 @@
 
                     <!-- 2. ความสมบูรณ์ -->
                     <div class="score-group">
-                        <div class="score-group-title"><i class="fas fa-check-double"></i> 2. ความสมบูรณ์ตรงตามแบบ <span class="max-badge">35 คะแนน</span></div>
+                        <div class="score-group-title">
+                            <i class="fas fa-check-double"></i> 2. ความสมบูรณ์ตรงตามแบบ <span class="max-badge">35 คะแนน</span>
+                            <button type="button" class="btn-inline-drawing" onclick="openDrawingModal('station2_panel1')">
+                                <i class="fas fa-search-plus"></i> ดูแบบแผง 01, 02
+                            </button>
+                        </div>
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
@@ -453,7 +495,12 @@
 
                     <!-- 4. ไฟฟ้า -->
                     <div class="score-group">
-                        <div class="score-group-title"><i class="fas fa-plug"></i> 4. การประกอบตู้ DC และเดินสายไฟฟ้า <span class="max-badge">20 คะแนน</span></div>
+                        <div class="score-group-title">
+                            <i class="fas fa-plug"></i> 4. การประกอบตู้ DC และเดินสายไฟฟ้า <span class="max-badge">20 คะแนน</span>
+                            <button type="button" class="btn-inline-drawing" onclick="openDrawingModal('station2_wiring')">
+                                <i class="fas fa-search-plus"></i> ดู Wiring Diagram
+                            </button>
+                        </div>
                         <div class="score-table">
                             <div class="score-row">
                                 <div class="score-item">
@@ -702,25 +749,6 @@
 </div>
 
 <!-- ========================================================== -->
-<!-- IMAGE PREVIEW MODAL -->
-<!-- ========================================================== -->
-<div class="image-modal" id="imageModal" onclick="closeImagePreview(event)">
-    <div class="image-modal-content" onclick="event.stopPropagation()">
-        <div class="image-modal-header">
-            <h3 id="modalTitle"><i class="fas fa-image"></i> ภาพประกอบการให้คะแนน</h3>
-            <button class="modal-close" onclick="closeImagePreview()">&times;</button>
-        </div>
-        <div class="image-modal-body">
-            <img id="modalImage" src="" alt="ภาพประกอบ" />
-            <div class="image-modal-caption" id="modalCaption">คลิกที่ภาพเพื่อซูม</div>
-        </div>
-        <div class="image-modal-footer">
-            <button class="btn btn-outline" onclick="closeImagePreview()"><i class="fas fa-times"></i> ปิด</button>
-        </div>
-    </div>
-</div>
-
-<!-- ========================================================== -->
 <!-- PRINT TEMPLATES -->
 <!-- ========================================================== -->
 <div id="print-container">
@@ -816,34 +844,125 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+<!-- ========================================================== -->
+<!-- CANDIDATE LOAD MODAL -->
+<!-- ========================================================== -->
+<div class="modal-backdrop" id="candidateModal" onclick="closeCandidateModalOnBackdrop(event)">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <i class="fas fa-folder-open modal-title-icon"></i>
+                <div>
+                    <h3>โหลดข้อมูลผู้เข้าสอบ</h3>
+                    <p>เลือกรายชื่อผู้เข้าสอบเพื่อดึงข้อมูลมาแสดงและแก้ไข</p>
+                </div>
+            </div>
+            <button class="modal-close-btn" onclick="closeCandidateModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="candidateSearchInput" placeholder="ค้นหาชื่อ, สถานที่ หรือหมายเลขแผง..." oninput="filterCandidateList()" />
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-btn active" id="btnFilter5" onclick="setCandidateFilter('latest5')">ล่าสุด 5 คน</button>
+                    <button class="filter-btn" id="btnFilterAll" onclick="setCandidateFilter('all')">ทั้งหมด</button>
+                </div>
+            </div>
+            <div class="modal-candidate-list" id="modalCandidateList">
+                <!-- Rendered list items -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="modal-footer-hint"><i class="fas fa-info-circle"></i> คลิกที่รายชื่อเพื่อดึงข้อมูลมาแก้ไข</span>
+            <div class="modal-footer-actions">
+                <button class="btn btn-outline-danger btn-sm" onclick="clearAllHistory()"><i class="fas fa-trash-alt"></i> ล้างประวัติทั้งหมด</button>
+                <button class="btn btn-outline btn-sm" onclick="closeCandidateModal()">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-	    <script>
-        // ตัวแปรเก็บสถานะการป้องกัน
-        let protectionEnabled = true;
-        
-        // ฟังก์ชันป้องกันการคลิกขวา
-        function preventRightClick(e) {
-            if (protectionEnabled) {
-                e.preventDefault();
-                alert('การคลิกขวาถูกปิดใช้งานบนหน้านี้');
-            }
-        }
-        
-        // เพิ่ม event listener สำหรับป้องกันการคลิกขวา
-        document.addEventListener('contextmenu', preventRightClick);
-        
-        // ฟังก์ชันเปิดการป้องกัน
-        document.getElementById('enableBtn').addEventListener('click', function() {
-            protectionEnabled = true;
-            alert('เปิดการป้องกันการคลิกขวาแล้ว');
-        });
-        
-        // ฟังก์ชันปิดการป้องกัน
-        document.getElementById('disableBtn').addEventListener('click', function() {
-            protectionEnabled = false;
-            alert('ปิดการป้องกันการคลิกขวาแล้ว');
-        });
-    </script>
+<!-- ========================================================== -->
+<!-- DRAWING MODAL (ป๊อบอัพแสดงภาพแบบประกอบการให้คะแนน) -->
+<!-- ========================================================== -->
+<div class="modal-backdrop" id="drawingModal" onclick="closeDrawingModalOnBackdrop(event)">
+    <div class="modal-dialog drawing-modal-dialog">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <i class="fas fa-image modal-title-icon"></i>
+                <div>
+                    <h3 id="drawingModalTitle">ภาพแบบประกอบการให้คะแนน</h3>
+                    <p id="drawingModalSubtitle">คลิกแท็บเพื่อเปลี่ยนภาพแบบประกอบ ซูม หรือดูภาพขนาดเต็ม</p>
+                </div>
+            </div>
+            <button class="modal-close-btn" onclick="closeDrawingModal()">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 14px 20px;">
+            <!-- Tabs -->
+            <div class="drawing-tabs">
+                <button type="button" class="drawing-tab-btn active" id="tabDraw_station1" onclick="switchDrawing('station1')">
+                    <i class="fas fa-drafting-compass"></i> แบบสถานี 1 (ABCD)
+                </button>
+                <button type="button" class="drawing-tab-btn" id="tabDraw_station2_panel1" onclick="switchDrawing('station2_panel1')">
+                    <i class="fas fa-solar-panel"></i> แบบติดตั้งแผง 01
+                </button>
+                <button type="button" class="drawing-tab-btn" id="tabDraw_station2_panel2" onclick="switchDrawing('station2_panel2')">
+                    <i class="fas fa-solar-panel"></i> แบบติดตั้งแผง 02
+                </button>
+                <button type="button" class="drawing-tab-btn" id="tabDraw_station2_wiring" onclick="switchDrawing('station2_wiring')">
+                    <i class="fas fa-project-diagram"></i> Wiring Diagram
+                </button>
+            </div>
+
+            <!-- Controls -->
+            <div class="drawing-controls">
+                <div class="drawing-info-title">
+                    <i class="fas fa-file-image"></i>
+                    <span id="drawingImageLabel">แบบชิ้นงานภาคปฏิบัติ สถานีที่ 1 (ABCD)</span>
+                </div>
+                <div class="drawing-zoom-btns">
+                    <button type="button" class="btn btn-xs btn-outline" onclick="zoomDrawing(1.2)" title="ซูมเข้า">
+                        <i class="fas fa-search-plus"></i> ซูมเข้า
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline" onclick="zoomDrawing(0.8)" title="ซูมออก">
+                        <i class="fas fa-search-minus"></i> ซูมออก
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline" onclick="resetDrawingZoom()" title="รีเซ็ตขนาด">
+                        <i class="fas fa-redo"></i> รีเซ็ต
+                    </button>
+                    <a id="drawingOpenNewTab" href="ABCD.jpg" target="_blank" class="btn btn-xs btn-outline-primary" title="เปิดภาพต้นฉบับในแท็บใหม่">
+                        <i class="fas fa-external-link-alt"></i> ภาพขนาดเต็ม
+                    </a>
+                </div>
+            </div>
+
+            <!-- Viewport -->
+            <div class="drawing-img-viewport" id="drawingViewport" onwheel="handleDrawingWheel(event)">
+                <img id="drawingImage" src="ABCD.jpg" alt="แบบประกอบการให้คะแนน" class="drawing-image" />
+            </div>
+
+            <!-- Caption -->
+            <div class="drawing-caption-box" id="drawingCaption">
+                แสดงแบบชิ้นงานที่ 1 ถึง 4: ระยะ d1=d3, ขนาดรูเจาะ, ความสมบูรณ์ของรูเจาะ และการใส่อุปกรณ์
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 10px 20px;">
+            <span class="modal-footer-hint"><i class="fas fa-mouse"></i> สามารถหมุนล้อเมาส์ (Scroll Wheel) เพื่อซูมเข้า-ออก หรือคลิกปุ่ม "ภาพขนาดเต็ม"</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeDrawingModal()">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Drawing Button on Screen -->
+<button type="button" class="floating-drawing-btn" onclick="openDrawingModal()" title="เปิดดูภาพแบบประกอบการให้คะแนน">
+    <i class="fas fa-images"></i> ดูภาพแบบประกอบ
+</button>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
